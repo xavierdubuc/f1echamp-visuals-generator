@@ -15,9 +15,10 @@ argParser = argparse.ArgumentParser()
 argParser.add_argument("type", help="Type de visuel")
 argParser.add_argument("-s", "--sheet", help="Name of the Excel sheet to use", dest='sheet')
 argParser.add_argument("-o", "--output", help="Output file to use", dest='output')
+argParser.add_argument("-i", "--input", help="Input file to use", dest='input')
 args = argParser.parse_args()
 
-with pandas.ExcelFile('./data.xlsx') as xls:
+with pandas.ExcelFile(args.input or './data.xlsx') as xls:
     sheet_name = args.sheet or 'Race 1'
     data = pandas.read_excel(xls, sheet_name, names=['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I'])
 

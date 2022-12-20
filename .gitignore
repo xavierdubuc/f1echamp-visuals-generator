@@ -1,4 +1,4 @@
-data.xlsx
+*.xlsx
 *.png
 !assets/**/*.png
 **/__pycache__
