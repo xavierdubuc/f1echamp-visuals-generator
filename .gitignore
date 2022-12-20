@@ -1,0 +1,6 @@
+data.xlsx
+*.png
+!assets/**/*.png
+**/__pycache__
+*.pyc
+config.py

@@ -1,24 +1,25 @@
 from models import *
+from config import REGULAR_FONT_PATH, BOLD_FONT_PATH
 
 # --- FONTS
 
 small_font = ImageFont.truetype(
-    "/home/xdu/.local/share/fonts/Formula1-Regular_web_0.ttf",
+    REGULAR_FONT_PATH,
     32,
     encoding="unic",
 )
 font = ImageFont.truetype(
-    "/home/xdu/.local/share/fonts/Formula1-Regular_web_0.ttf",
+    REGULAR_FONT_PATH,
     38,
     encoding="unic",
 )
 big_font = ImageFont.truetype(
-    "/home/xdu/.local/share/fonts/Formula1-Regular_web_0.ttf",
+    REGULAR_FONT_PATH,
     56,
     encoding="unic"
 )
 pilot_font = ImageFont.truetype(
-    "/home/xdu/.local/share/fonts/Formula1-Bold_web_0.ttf",
+    BOLD_FONT_PATH,
     30,
     encoding="unic"
 )
@@ -26,10 +27,12 @@ pilot_font = ImageFont.truetype(
 # --- CIRCUITS
 hungary = Circuit(id='hungary', name='Hongrie', lap_length=4.381, best_lap="1' 16'' 627")
 belgium = Circuit(id='belgium', name='Belgique', lap_length=7.004, best_lap="1' 41'' 252")
+netherlands = Circuit(id='netherlands', name='Pays-Bas', lap_length=4.259, best_lap="1' 11'' 097")
 
 circuits = {
     'Hongrie': hungary,
     'Belgique': belgium,
+    'Pays-Bas': netherlands
 }
 
 

@@ -25,6 +25,7 @@ round = int(data['B'][0])
 circuit_name = data['B'][1]
 laps = int(data['B'][2])
 race_day = data['B'][3]
+hour = data['B'][4].strftime('%H.%M')
 
 swappings = determine_swappings(data)
 
@@ -34,6 +35,7 @@ race = Race(
     circuit = circuits[circuit_name],
     day = race_day.day,
     month = race_day.strftime('%b'),
+    hour=hour,
     pilots=pilots,
     swappings=swappings
 )

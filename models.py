@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from PIL import Image, ImageFont, ImageDraw
+from config import REGULAR_FONT_PATH, BOLD_FONT_PATH
 
 @dataclass
 class Team:
@@ -32,17 +33,17 @@ class Team:
         draw = ImageDraw.Draw(img)
         
         big_font = ImageFont.truetype(
-            "/home/xdu/.local/share/fonts/Formula1-Regular_web_0.ttf",
+            REGULAR_FONT_PATH,
             font_size+10,
             encoding="unic",
         )
         font = ImageFont.truetype(
-            "/home/xdu/.local/share/fonts/Formula1-Bold_web_0.ttf",
+            BOLD_FONT_PATH,
             font_size,
             encoding="unic",
         )
         small_font = ImageFont.truetype(
-            "/home/xdu/.local/share/fonts/Formula1-Regular_web_0.ttf",
+            REGULAR_FONT_PATH,
             small_font_size,
             encoding="unic",
         )
@@ -177,6 +178,7 @@ class Race:
     laps: int
     day: str
     month: str
+    hour: str
     circuit: Circuit
     pilots: dict
     swappings: dict = None
@@ -203,7 +205,7 @@ class Race:
         # circuit name
         draw_canvas.text((left+250,top+5), self.circuit.name, 'white', big_font)
         # flag
-        with Image.open(f'assets/flags/{self.circuit.id}.png') as flag:
+        with Image.open(f'assets/circuits/flags/{self.circuit.id}.png') as flag:
             flag.thumbnail((100,100), Image.Resampling.LANCZOS)
             img.paste(flag, (bg_date.width - flag.width - 10, top-2), flag)
         return img
@@ -318,7 +320,7 @@ class Visual:
             padding_right = 90
         img = Image.new('RGBA', (width, height), (255, 0, 0, 0))
         font = ImageFont.truetype(
-            "/home/xdu/.local/share/fonts/Formula1-Bold_web_0.ttf",
+            BOLD_FONT_PATH,
             font_size,
             encoding="unic"
         )
