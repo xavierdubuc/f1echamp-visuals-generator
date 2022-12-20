@@ -1,28 +1,6 @@
 from models import *
 from config import REGULAR_FONT_PATH, BOLD_FONT_PATH
 
-# --- FONTS
-
-small_font = ImageFont.truetype(
-    REGULAR_FONT_PATH,
-    32,
-    encoding="unic",
-)
-font = ImageFont.truetype(
-    REGULAR_FONT_PATH,
-    38,
-    encoding="unic",
-)
-big_font = ImageFont.truetype(
-    REGULAR_FONT_PATH,
-    56,
-    encoding="unic"
-)
-pilot_font = ImageFont.truetype(
-    BOLD_FONT_PATH,
-    30,
-    encoding="unic"
-)
 
 # --- CIRCUITS
 hungary = Circuit(id='hungary', name='Hongrie', lap_length=4.381, best_lap="1' 16'' 627")

@@ -1,6 +1,7 @@
 from dataclasses import dataclass
-from PIL import Image, ImageFont, ImageDraw
+from PIL import Image, ImageDraw
 from config import REGULAR_FONT_PATH, BOLD_FONT_PATH
+from font_factory import FontFactory
 
 @dataclass
 class Team:
@@ -32,22 +33,9 @@ class Team:
         img.paste(bg)
         draw = ImageDraw.Draw(img)
         
-        big_font = ImageFont.truetype(
-            REGULAR_FONT_PATH,
-            font_size+10,
-            encoding="unic",
-        )
-        font = ImageFont.truetype(
-            BOLD_FONT_PATH,
-            font_size,
-            encoding="unic",
-        )
-        small_font = ImageFont.truetype(
-            REGULAR_FONT_PATH,
-            small_font_size,
-            encoding="unic",
-        )
-
+        big_font = FontFactory.regular(font_size+10)
+        font = FontFactory.bold(font_size)
+        small_font = FontFactory.regular(small_font_size)
 
         # box
         draw.rectangle(((0,0), (box_width, box_height)), fill=self.box_color)
@@ -319,11 +307,7 @@ class Visual:
             font_size = 64
             padding_right = 90
         img = Image.new('RGBA', (width, height), (255, 0, 0, 0))
-        font = ImageFont.truetype(
-            BOLD_FONT_PATH,
-            font_size,
-            encoding="unic"
-        )
+        font = FontFactory.bold(font_size)
         draw_img = ImageDraw.Draw(img)
         draw_img.text((0,0), 'LINE UP - RACE', (255, 255, 255), font)
         draw_img.text((width-padding_right,0), f'{self.race.round}', (255, 0, 0), font)

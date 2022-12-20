@@ -2,6 +2,12 @@ from PIL import Image
 
 from models import *
 from data import *
+from font_factory import FontFactory
+
+small_font = FontFactory.regular(32)
+font = FontFactory.regular(38)
+big_font = FontFactory.regular(56)
+pilot_font = FontFactory.bold(30)
 
 def _get_rankings_image(race: Race, ranking: list, width: int, height: int):
     img = Image.new('RGBA', (width, height), (255, 0, 0, 0))
