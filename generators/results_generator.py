@@ -18,8 +18,13 @@ def _get_rankings_image(race: Race, ranking: list, width: int, height: int):
         # Get pilot
         pilot = pilots.get(pilot_name, None)
         if not pilot:
-            replaces = race.swappings[pilot_name]
-            pilot = Pilot(name=pilot_name, team=replaces.team)
+            replaces = race.swappings.get(pilot_name)
+            if not replaces:
+                pilot_name = 'Unknown'
+                team = redbull # FIXME redbull is used as default value, maybe create a fake team instead
+            else:
+                team = replaces.team
+            pilot = Pilot(name=pilot_name, team=team)
 
         pos = index + 1
         left = first_col_left if index % 2 == 0 else second_col_left
