@@ -5,6 +5,7 @@ from models import *
 from data import *
 from generators.results_generator import generate_results
 from generators.lineups_generator import generate_lineup
+from generators.presentation_generator import generate_presentation
 
 def determine_swappings(data):
     replacements = data[~data['E'].isna()]
@@ -43,8 +44,11 @@ race = Race(
 
 if args.type in ('result', 'results'):
     ranking = list(data['I'])
-    generate_results(race, ranking, args.output or './results_from_excel.png')
+    generate_results(race, ranking, args.output or './results.png')
 elif args.type in ('lineup', 'line-up', 'lineups', 'line-ups'):
-    generate_lineup(race, teams, args.output or './lineup_from_excel.png')
+    generate_lineup(race, teams, args.output or './lineup.png')
+elif args.type in ('presentation', 'presentations'):
+    description = data['A'][6]
+    generate_presentation(race, description, args.output or './presentation.png')
 else:
     print('Please specify a valid visual type (result,lineup or presentation)')

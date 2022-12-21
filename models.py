@@ -198,6 +198,40 @@ class Race:
             img.paste(flag, (bg_date.width - flag.width - 10, top-2), flag)
         return img
 
+    def get_just_information_image(self, width: int, height: int, font):
+        img = Image.new('RGBA', (width, height), (0, 0, 0, 0))
+        bg_top = 0
+        bg = Image.new('RGB', (width, height), (80, 80, 80))
+        alpha = Image.linear_gradient('L').rotate(90).resize((width, height))
+        # alpha = alpha.crop((alpha.width/2, 0, alpha.width, alpha.height)).resize((width, height))
+        bg.putalpha(alpha)
+        img.paste(bg, (0, bg_top), bg)
+
+        draw_canvas = ImageDraw.Draw(img)
+        with Image.open('assets/results/redcorner.png') as red_corner:
+            red_corner = red_corner.convert('RGBA')
+            img.paste(red_corner, (0, bg_top), red_corner)
+        draw_canvas.rectangle(((0,bg_top+red_corner.height), (9, bg_top+red_corner.height+325)), fill=(255, 0, 0))
+        draw_canvas.rectangle(((red_corner.width-2,bg_top), (width, bg_top+9)), fill=(255, 0, 0))
+
+        # infos
+        title_color = (0,0,0)
+        info_color = (255, 255, 255)
+        draw_canvas.text((50,bg_top+50), f'Longueur', title_color, font)
+        draw_canvas.text((350,bg_top+50), f'Nombre de tours', title_color, font)
+        draw_canvas.text((50,bg_top+100), f'{self.circuit.lap_length} Km', info_color, font)
+        draw_canvas.text((350,bg_top+100), f'{self.laps} tours', info_color, font)
+        draw_canvas.text((50,bg_top+175), f'Distance totale', title_color, font)
+        draw_canvas.text((50,bg_top+225), f'{self.get_total_length()} Km', info_color, font)
+        draw_canvas.text((50,bg_top+300), f'Meilleur temps', title_color, font)
+        draw_canvas.text((50,bg_top+350), f'{self.circuit.best_lap}', info_color, font)
+
+        # map
+        with Image.open(f'assets/circuits/maps/{self.circuit.id}.png') as map:
+            map.thumbnail((width, height//2), Image.Resampling.LANCZOS)
+            img.paste(map, (width - map.width, height - map.height), map)
+        return img
+
     def get_information_image(self, width: int, height: int, font):
         img = Image.new('RGBA', (width, height), (0, 0, 0, 0))
 
@@ -283,11 +317,15 @@ class Visual:
         elif self.type == 'lineup':
             title = self._get_race_lineup_title(width//3, height)
             top = height // 3
+        elif self.type == 'presentation':
+            title = self._get_race_presentation_title(width//3, height)
+            top = height // 3
         left = (width - title.width) // 2 # centered
         img.paste(title, (left, top), title)
 
         # F1 22
-        with Image.open(f'assets/f122.png') as f122:
+        logof1 = 'f122_black' if self.type == 'presentation' else 'f122'
+        with Image.open(f'assets/{logof1}.png') as f122:
             f122.thumbnail((width//4, height), Image.Resampling.LANCZOS)
             left = (width - f122.width) - 40 # right aligned, with a small padding
             top = (height-f122.height)//2 # centered
@@ -311,4 +349,17 @@ class Visual:
         draw_img = ImageDraw.Draw(img)
         draw_img.text((0,0), 'LINE UP - RACE', (255, 255, 255), font)
         draw_img.text((width-padding_right,0), f'{self.race.round}', (255, 0, 0), font)
+        return img
+
+    def _get_race_presentation_title(self, width, height):
+        font_size = 68
+        img = Image.new('RGBA', (width, height), (255, 0, 0, 0))
+        font = FontFactory.bold(font_size)
+        draw_img = ImageDraw.Draw(img)
+        _, _, whole_width, _ = draw_img.textbbox((0, 0), f'RACE {self.race.round}', font)
+        _, _, race_width, _ = draw_img.textbbox((0, 0), f'RACE', font)
+        race_left = (width-whole_width) // 2
+        number_left = race_left + race_width + 20
+        draw_img.text((race_left,0), 'RACE', (255, 255, 255), font)
+        draw_img.text((number_left,0), f'{self.race.round}', (255, 0, 0), font)
         return img
