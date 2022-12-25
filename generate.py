@@ -3,6 +3,7 @@ import argparse
 
 from models import *
 from data import *
+from generators.details_generator import DetailsGenerator
 from generators.results_generator import generate_results
 from generators.lineups_generator import generate_lineup
 from generators.presentation_generator import generate_presentation
@@ -13,7 +14,7 @@ def determine_swappings(data):
 
 
 argParser = argparse.ArgumentParser()
-argParser.add_argument("type", help="Type de visuel")
+argParser.add_argument("type", help="Type de visuel (results, lineup, presentation)")
 argParser.add_argument("-s", "--sheet", help="Name of the Excel sheet to use", dest='sheet')
 argParser.add_argument("-o", "--output", help="Output file to use", dest='output')
 argParser.add_argument("-i", "--input", help="Input file to use", dest='input')
@@ -21,7 +22,7 @@ args = argParser.parse_args()
 
 with pandas.ExcelFile(args.input or './data.xlsx') as xls:
     sheet_name = args.sheet or 'Race 1'
-    data = pandas.read_excel(xls, sheet_name, names=['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I'])
+    data = pandas.read_excel(xls, sheet_name, names=['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K'])
 
 round = int(data['B'][0])
 circuit_name = data['B'][1]
@@ -43,8 +44,14 @@ race = Race(
 )
 
 if args.type in ('result', 'results'):
-    ranking = list(data['I'])
-    generate_results(race, ranking, args.output or './results.png')
+    ranking = list(data['I'][:20])
+    fastest_pilot = data['G'][22]
+    generate_results(race, ranking, fastest_pilot, args.output or './results.png')
+elif args.type in ('details', 'detail'):
+    ranking_data = data[['I', 'J', 'K']][:20]
+    fastest_lap = { 'pilot_name': data['G'][22], 'lap': data['G'][24], 'time': data['G'][26] }
+    generator = DetailsGenerator(race, ranking_data, fastest_lap, args.output or './details.png')
+    generator.generate()
 elif args.type in ('lineup', 'line-up', 'lineups', 'line-ups'):
     generate_lineup(race, teams, args.output or './lineup.png')
 elif args.type in ('presentation', 'presentations'):

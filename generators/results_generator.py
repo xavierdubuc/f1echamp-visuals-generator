@@ -9,7 +9,7 @@ font = FontFactory.regular(38)
 big_font = FontFactory.regular(56)
 pilot_font = FontFactory.bold(30)
 
-def _get_rankings_image(race: Race, ranking: list, width: int, height: int):
+def _get_rankings_image(race: Race, ranking: list, fastest_pilot_name: str, width: int, height: int):
     img = Image.new('RGBA', (width, height), (255, 0, 0, 0))
     top = 0
     hop_between_position = 38
@@ -34,12 +34,13 @@ def _get_rankings_image(race: Race, ranking: list, width: int, height: int):
 
         pos = index + 1
         left = first_col_left if index % 2 == 0 else second_col_left
-        ranking_pilot_image = pilot.get_ranking_image(pos, col_width, row_height, small_font, pilot_font)
+        has_fastest_lap = pilot_name == fastest_pilot_name
+        ranking_pilot_image = pilot.get_ranking_image(pos, col_width, row_height, small_font, pilot_font, has_fastest_lap)
         img.paste(ranking_pilot_image, (left, top))
         top += hop_between_position
     return img
 
-def generate_results(race: Race, ranking: list, filepath: str = './results.png'):
+def generate_results(race: Race, ranking: list, fastest_pilot_name:str, filepath: str = './results.png'):
     visual = Visual(type='result', race=race)
     with Image.open('assets/bg.png') as bg:
         final = bg.copy().convert('RGB')
@@ -70,6 +71,6 @@ def generate_results(race: Race, ranking: list, filepath: str = './results.png')
 
         # get rankings image
         rankings_top = (title_height + race_title_height) + 80
-        rankings_img = _get_rankings_image(race, ranking, left_part_width, left_part_height)
+        rankings_img = _get_rankings_image(race, ranking, fastest_pilot_name, left_part_width, left_part_height)
         final.paste(rankings_img, (0, rankings_top), rankings_img)
         final.save(filepath, quality=95)

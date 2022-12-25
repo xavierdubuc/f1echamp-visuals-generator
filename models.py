@@ -92,7 +92,6 @@ class Team:
             left = int(2 * (width / 3)) + 20 * 2
         return img
 
-
 @dataclass
 class Pilot:
     name: str
@@ -135,22 +134,31 @@ class Pilot:
 
         return img
 
-    def get_ranking_image(self, position:int, width: int, height: int, number_font, pilot_font):
+    def get_ranking_image(self, position:int, width: int, height: int, number_font, pilot_font, has_fastest_lap:bool = False):
         img = Image.new('RGBA', (width, height), (255, 0, 0, 0))
 
-        grid_position_bg = Image.new('RGB', (width, height), (0,0,0))
+        if has_fastest_lap:
+            bg_color = (180, 60, 220)
+        else:
+            bg_color = (0,0,0)
+        grid_position_bg = Image.new('RGB', (width, height), bg_color)
         alpha = Image.linear_gradient('L').rotate(-90).resize((width,height))
         grid_position_bg.putalpha(alpha)
-        img.paste(grid_position_bg)
+        img.paste(grid_position_bg, (5,0))
 
         white_box_width = height
         with Image.open(f'assets/results/positions/{position}.png') as tmp:
             grid_position_number = tmp.copy().convert('RGBA')
             grid_position_number.thumbnail((white_box_width, height), Image.Resampling.LANCZOS)
-            img.paste(grid_position_number)
+            img.paste(grid_position_number, grid_position_number)
 
         pilot_image = self.get_image(width - (white_box_width+15), height, number_font, pilot_font)
         img.paste(pilot_image, (white_box_width+15, 0), pilot_image)
+        if has_fastest_lap:
+            with Image.open(f'assets/fastest_lap.png') as fstst_img:
+                fstst_img.thumbnail((height, height), Image.Resampling.LANCZOS)
+                img.paste(fstst_img, (width-fstst_img.width * 2, 0))
+
         return img
 
 @dataclass
@@ -159,6 +167,25 @@ class Circuit:
     name: str
     lap_length: float
     best_lap: str
+
+    def get_title_image(self, height:int, font):
+        tmp = Image.new('RGBA', (5000, height), (255, 0, 0, 0))
+        tmp_draw = ImageDraw.Draw(tmp)
+        # circuit name
+        _,_,text_width,text_height = tmp_draw.textbbox((0,0), self.name, font)
+        text_top = (height - text_height) // 2
+        # flag
+        with Image.open(f'assets/circuits/flags/{self.id}.png') as flag:
+            flag.thumbnail((height,height), Image.Resampling.LANCZOS)
+
+            padding_between = 30
+            width = text_width + flag.width + padding_between
+            img = Image.new('RGBA', (width, height), (255, 0, 0, 0))
+            draw = ImageDraw.Draw(img)
+            flag_left = text_width + padding_between
+            draw.text((0, text_top), self.name, (255, 255, 255), font)
+            img.paste(flag, (flag_left, text_top), flag)
+        return img
 
 @dataclass
 class Race:
@@ -196,6 +223,27 @@ class Race:
         with Image.open(f'assets/circuits/flags/{self.circuit.id}.png') as flag:
             flag.thumbnail((100,100), Image.Resampling.LANCZOS)
             img.paste(flag, (bg_date.width - flag.width - 10, top-2), flag)
+        return img
+
+    def get_title_image_simple(self, width:int, height:int, date_font, circuit_font):
+        img = Image.new('RGBA', (width, height), (255, 0, 0, 0))
+        draw = ImageDraw.Draw(img)
+        day_left = 10
+        _,_,day_width,day_height = draw.textbbox((0,0), f'{self.day}.', date_font)
+        _,_,month_width, month_height = draw.textbbox((0,0), self.month, date_font)
+        day_top = (height-day_height) // 2
+        month_top = (height-month_height) // 2
+        month_left = day_left+day_width + 10
+
+        # day
+        draw.text((day_left, day_top), f'{self.day}.', 'white', date_font)
+        # month
+        draw.text((month_left,month_top), self.month, 'grey', date_font)
+
+        circuit_img = self.circuit.get_title_image(height, circuit_font)
+        circuit_top = (height-circuit_img.height) // 2
+        circuit_left = month_left + month_width + 20
+        img.paste(circuit_img, (circuit_left, circuit_top), circuit_img)
         return img
 
     def get_just_information_image(self, width: int, height: int, font):
@@ -290,6 +338,27 @@ class Race:
                 out.append(pilot_to_append)
             return out
 
+    def get_pilot(self, pilot_name:str) -> Pilot:
+        pilot = self.pilots.get(pilot_name, None)
+        if not pilot:
+            replaces = self.swappings.get(pilot_name)
+            if not replaces:
+                pilot_name = 'Unknown'
+                team = self._default_team # FIXME redbull is used as default value, maybe create a fake team instead
+            else:
+                team = replaces.team
+            pilot = Pilot(name=pilot_name, team=team)
+        return pilot
+
+    _default_team = Team(
+        name='RedBull',
+        title='Unknown',
+        subtitle="Team",
+        main_color=(0,0,0),
+        secondary_color=(0, 0, 0),
+        box_color= (0,0,0)
+    )
+
 @dataclass
 class Visual:
     type: str
@@ -363,3 +432,33 @@ class Visual:
         draw_img.text((race_left,0), 'RACE', (255, 255, 255), font)
         draw_img.text((number_left,0), f'{self.race.round}', (255, 0, 0), font)
         return img
+
+@dataclass
+class PilotResult:
+    pilot: Pilot
+    position: int
+    split: str
+    tyres: str
+
+    def get_details_image(self, width:int, height:int, largest_split_width:int):
+        small_font = FontFactory.regular(32)
+        pilot_font = FontFactory.bold(30)
+        pilot_image = self.pilot.get_ranking_image(self.position, width, height, small_font, pilot_font, False)
+        draw = ImageDraw.Draw(pilot_image)
+        split = self.split if (self.position == 1 or self.split in ('NT', 'DSQ')) else f'+{self.split}'
+        _,_,real_split_width, split_height = draw.textbbox((0,0), split, small_font)
+        diff = largest_split_width - real_split_width
+        pilot_right = 460
+
+        split_left = pilot_right + diff
+        draw.text((split_left, (height-split_height)//2), split, (255, 255, 255), small_font)
+
+        current_left = split_left+real_split_width + 20
+        for tyre in self.tyres:
+            with Image.open(f'./assets/tyres/{tyre}.png') as tyre_img:
+                tyre_img.thumbnail((height, height))
+                pilot_image.paste(tyre_img, (current_left, 0), tyre_img)
+                # tyre_img has a transparent contour
+                current_left += (tyre_img.width-12)
+
+        return pilot_image
