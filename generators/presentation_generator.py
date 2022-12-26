@@ -2,6 +2,7 @@ from PIL import Image
 
 from models import *
 from data import *
+from helpers.transform import *
 import textwrap
 
 def _get_left_content_image(race: Race, description:str, width:int, height:int):
@@ -69,11 +70,8 @@ def _get_left_content_image(race: Race, description:str, width:int, height:int):
     img_top = date_bottom + 20
     remaining_height = height - img_top
     with Image.open(f'assets/circuits/photos/{race.circuit.id}.png') as photo:
-        photo.thumbnail((width - month_left, remaining_height), Image.Resampling.LANCZOS)
-        mask = Image.new('1', (photo.width, photo.height), 0)
-        draw_mask = ImageDraw.Draw(mask)
-        draw_mask.rounded_rectangle(((0,0), (mask.width, mask.height)), radius=50, fill=1)
-        img.paste(photo, (month_left, img_top), mask)
+        photo = resize(photo, width-month_left, remaining_height)
+        paste_rounded(img, photo, (month_left, img_top))
 
     # hour
     _, _, hour_width, hour_height = draw.textbbox((0, 0), race.hour, hour_font)
@@ -84,8 +82,7 @@ def _get_left_content_image(race: Race, description:str, width:int, height:int):
 
     # hour bg
     bg_hour = Image.new('RGB', bg_size, (0, 0, 0))
-    alpha = Image.linear_gradient('L').rotate(-90).resize(bg_size)
-    bg_hour.putalpha(alpha)
+    gradient(bg_hour, GradientDirection.LEFT_TO_RIGHT)
     img.alpha_composite(bg_hour, (month_left, hour_top))
     # hour line
     draw.line(((month_left+4, hour_top), (month_left+4, hour_top+bg_hour.height-1)), fill=(32, 167, 215), width=10)

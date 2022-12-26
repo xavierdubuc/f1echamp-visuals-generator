@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from PIL import Image, ImageDraw
 from config import REGULAR_FONT_PATH, BOLD_FONT_PATH
 from font_factory import FontFactory
+from helpers.transform import GradientDirection, gradient, resize, text_size
 
 @dataclass
 class Team:
@@ -14,6 +15,56 @@ class Team:
 
     def get_image(self):
         return f'assets/teams/{self.name}.png'
+
+    def get_team_image(self, width, title_font):
+        line_separation = 10
+        box_width = 10
+        v_padding = 10
+        title_width, title_height = text_size(self.title.upper(), title_font)
+        subtitle_font = FontFactory.regular(title_font.size - 10)
+        subtitle_width, subtitle_height = text_size(self.subtitle, title_font)
+        box_height = title_height + subtitle_height + line_separation + 2 * v_padding
+
+        img = Image.new('RGBA', (width, box_height), (0,0,0,0))
+        draw = ImageDraw.Draw(img)
+        # background
+        bg = Image.new('RGB', (width, box_height))
+        gradient(bg,direction=GradientDirection.LEFT_TO_RIGHT)
+        img.paste(bg)
+
+        # box
+        draw.rectangle(((0,0), (box_width, box_height)), fill=self.box_color)
+
+        # Name
+        padding_after_box = box_width + 20
+        draw.text(
+            (padding_after_box,v_padding),
+            self.title.upper(),
+            fill=(255, 255, 255),
+            font=title_font
+        )
+        draw.text(
+            (padding_after_box, v_padding+line_separation+title_height),
+            self.subtitle,
+            fill=(255, 255, 255),
+            font=subtitle_font
+        )
+
+        # logo
+        with Image.open(self.get_image()) as team_image:
+            padding = 4
+            image_size = box_height - padding
+            left = width - team_image.width
+            top = 0
+            team_image = resize(team_image, image_size, image_size)
+            team_image.thumbnail((image_size, image_size), Image.Resampling.LANCZOS)
+            img.paste(team_image, (left, top), team_image)
+
+        return img
+
+
+    def get_pilots_image(self, width, height, pilots):
+        pass
 
     def get_lineup_image(self, width, height, pilots):
         # team
@@ -383,6 +434,9 @@ class Visual:
         if self.type == 'result':
             title = self._get_race_result_title(width//3, height)
             top = (height - title.height) // 2 # centered
+        elif self.type == 'fastest':
+            title = self._get_race_fastest_title(width//3, height)
+            top = height // 3
         elif self.type == 'lineup':
             title = self._get_race_lineup_title(width//3, height)
             top = height // 3
@@ -431,6 +485,22 @@ class Visual:
         number_left = race_left + race_width + 20
         draw_img.text((race_left,0), 'RACE', (255, 255, 255), font)
         draw_img.text((number_left,0), f'{self.race.round}', (255, 0, 0), font)
+        return img
+
+    def _get_race_fastest_title(self, width, height):
+        font_size = 60
+        img = Image.new('RGBA', (width, height), (255, 0, 0, 0))
+        font = FontFactory.bold(font_size)
+        draw_img = ImageDraw.Draw(img)
+        _, _, whole_width, _ = draw_img.textbbox((0, 0), f'Race {self.race.round} - Fastest lap', font)
+        _, _, race_width, _ = draw_img.textbbox((0, 0), f'Race', font)
+        _, _, number_width, _ = draw_img.textbbox((0, 0), f'{self.race.round}', font)
+        race_left = (width-whole_width) // 2
+        number_left = race_left + race_width + 20
+        fastest_left = number_left + number_width
+        draw_img.text((race_left,0), 'Race', (255, 255, 255), font)
+        draw_img.text((number_left,0), f'{self.race.round}', (255, 0, 0), font)
+        draw_img.text((fastest_left,0), ' - Fastest lap', (255, 255, 255), font)
         return img
 
 @dataclass

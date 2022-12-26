@@ -4,6 +4,7 @@ import argparse
 from models import *
 from data import *
 from generators.details_generator import DetailsGenerator
+from generators.fastest_generator import FastestGenerator
 from generators.results_generator import generate_results
 from generators.lineups_generator import generate_lineup
 from generators.presentation_generator import generate_presentation
@@ -22,7 +23,13 @@ args = argParser.parse_args()
 
 with pandas.ExcelFile(args.input or './data.xlsx') as xls:
     sheet_name = args.sheet or 'Race 1'
-    data = pandas.read_excel(xls, sheet_name, names=['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K'])
+    if args.type in ('details', 'fastest'):
+        names = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L']
+    elif args.type == 'results':
+        names = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I']
+    else:
+        names = ['A', 'B', 'C', 'D', 'E', 'F']
+    data = pandas.read_excel(xls, sheet_name, usecols=names, names=names)
 
 round = int(data['B'][0])
 circuit_name = data['B'][1]
@@ -43,19 +50,23 @@ race = Race(
     swappings=swappings
 )
 
-if args.type in ('result', 'results'):
+if args.type == 'results':
     ranking = list(data['I'][:20])
     fastest_pilot = data['G'][22]
     generate_results(race, ranking, fastest_pilot, args.output or './results.png')
-elif args.type in ('details', 'detail'):
-    ranking_data = data[['I', 'J', 'K']][:20]
+elif args.type == 'details':
+    ranking_data = data[['I', 'J', 'K', 'L']][:20]
     fastest_lap = { 'pilot_name': data['G'][22], 'lap': data['G'][24], 'time': data['G'][26] }
     generator = DetailsGenerator(race, ranking_data, fastest_lap, args.output or './details.png')
     generator.generate()
-elif args.type in ('lineup', 'line-up', 'lineups', 'line-ups'):
+elif args.type == 'fastest':
+    ranking_data = data[['I', 'J', 'K', 'L']][:20]
+    generator = FastestGenerator(race, ranking_data, args.output or './fastest.png')
+    generator.generate()
+elif args.type == 'lineup':
     generate_lineup(race, teams, args.output or './lineup.png')
-elif args.type in ('presentation', 'presentations'):
+elif args.type == 'presentation':
     description = data['A'][6]
     generate_presentation(race, description, args.output or './presentation.png')
 else:
-    print('Please specify a valid visual type (result,lineup or presentation)')
+    print('Please specify a valid visual type (results, details, fastest, lineup or presentation)')
