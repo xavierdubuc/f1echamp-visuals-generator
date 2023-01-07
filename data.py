@@ -174,7 +174,7 @@ pilots = {
     'FBRT_Seb07': Pilot(name='FBRT_Seb07', team=williams, number='7'),
     # ALFA ROMEO
     'WSC_Gregy21': Pilot(name='WSC_Gregy21', team=alfa_romeo, number='21'),
-    'Djeck': Pilot(name='Djeck', team=alfa_romeo, number='83'),
+    'TheLoulou29': Pilot(name='TheLoulou29', team=alfa_romeo, number='68'),
     # ASTON MARTIN
     'FBRT_REMBRO': Pilot(name='FBRT_REMBRO', team=aston_martin, number='78'),
     'FBRT_Nico': Pilot(name='FBRT_Nico', team=aston_martin, number='29'),
