@@ -156,7 +156,8 @@ pilots = {
     'VRA-RedAym62': Pilot(name='VRA-RedAym62', team=redbull, number='62'),
     # MERCEDES'
     'FBRT_CiD16': Pilot(name='FBRT_CiD16', team=mercedes, number='61'),
-    'FBRT_Naax': Pilot(name='FBRT_Naax', team=mercedes, number='30'),
+    # 'FBRT_Naax': Pilot(name='FBRT_Naax', team=mercedes, number='30'),
+    'xJuzooo': Pilot(name='xJuzooo', team=mercedes, number='89'),
     # MCLAREN
     'ewocflo': Pilot(name='ewocflo', team=mclaren, number='66'),
     'FBRT_JCDARCH9': Pilot(name='FBRT_JCDARCH9', team=mclaren, number='90'),
