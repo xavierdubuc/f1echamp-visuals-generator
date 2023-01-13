@@ -9,10 +9,26 @@ from generators.results_generator import generate_results
 from generators.lineups_generator import generate_lineup
 from generators.presentation_generator import generate_presentation
 
+
+VALUES_SHEET_NAME = '_values'
+
 def determine_swappings(data):
     replacements = data[~data['E'].isna()]
     return {row['E']: pilots[row['D']] for i, row in replacements.iterrows()}
 
+def build_pilots_list(values:pandas.DataFrame):
+    pilots = {}
+    for i, row in values.iterrows():
+        if isinstance(row['Pilotes'], str):
+            pilots[row['Pilotes']] = Pilot(name=row['Pilotes'], team=teams_idx[row['Ecurie']], number=str(int(row['Numéro'])))
+    return pilots
+
+def build_teams_list(values:pandas.DataFrame):
+    teams = []
+    for i, row in values.iterrows():
+        if isinstance(row['Ecuries'], str):
+            teams.append(teams_idx[row['Ecuries']])
+    return teams
 
 argParser = argparse.ArgumentParser()
 argParser.add_argument("type", help="Type de visuel (results, lineup, presentation)")
@@ -22,7 +38,16 @@ argParser.add_argument("-i", "--input", help="Input file to use", dest='input')
 args = argParser.parse_args()
 
 with pandas.ExcelFile(args.input or './data.xlsx') as xls:
+    if VALUES_SHEET_NAME in xls.sheet_names:
+        pilots_values = pandas.read_excel(xls, VALUES_SHEET_NAME)[['Pilotes', 'Numéro', 'Ecurie']]
+        pilots = build_pilots_list(pilots_values)
+
+        teams_values = pandas.read_excel(xls, VALUES_SHEET_NAME)[['Ecuries']]
+        teams = build_teams_list(teams_values)
+
     sheet_name = args.sheet or 'Race 1'
+    if sheet_name not in xls.sheet_names:
+        raise Exception(f'Please select a sheet within possible values : {xls.sheet_names}')
     if args.type in ('details', 'fastest'):
         names = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L']
     elif args.type == 'results':
