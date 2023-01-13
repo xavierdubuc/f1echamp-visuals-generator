@@ -149,6 +149,19 @@ teams = [
     alpha_tauri
 ]
 
+teams_idx = {
+    'RedBull': redbull,
+    'Mercedes': mercedes,
+    'McLaren': mclaren,
+    'Haas': haas,
+    'Alpine': alpine,
+    'Ferrari': ferrari,
+    'Williams': williams,
+    'AlfaRomeo': alfa_romeo,
+    'AstonMartin': aston_martin,
+    'AlphaTauri': alpha_tauri
+}
+
 # --- PILOTS
 pilots = {
     # REDBULL
