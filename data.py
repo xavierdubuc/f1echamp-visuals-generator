@@ -2,6 +2,7 @@ from models import *
 
 
 # --- CIRCUITS
+
 bahrein = Circuit(id='bahrein', name='Bahreïn', lap_length=5.412, best_lap="1' 31'' 447")
 saudiarabia = Circuit(id='saudiarabia', name='Arabie Saoudite', lap_length=6.174, best_lap="1' 30'' 734")
 australia = Circuit(id='australia', name='Australie', lap_length=5.278, best_lap="N/A")
@@ -54,15 +55,15 @@ circuits = {
     'Chine': china
 }
 
-
 # --- TEAMS
+
 redbull = Team(
     name='RedBull',
     title='Oracle Red Bull',
     subtitle="Racing",
-    main_color=(215,190,50),
+    main_color=(215, 190, 50),
     secondary_color=(0, 0, 186),
-    box_color= (0,0,186)
+    box_color=(0, 0, 186)
 )
 mercedes = Team(
     name='Mercedes',
@@ -100,9 +101,9 @@ ferrari = Team(
     name='Ferrari',
     title='Ferrari',
     subtitle='Scuderia',
-    main_color=(255,200,200),
-    secondary_color=(255,0,0),
-    box_color=(167,8,6),
+    main_color=(255, 200, 200),
+    secondary_color=(255, 0, 0),
+    box_color=(167, 8, 6),
 )
 williams = Team(
     name='Williams',
@@ -136,18 +137,7 @@ alpha_tauri = Team(
     secondary_color=(200, 200, 200),
     box_color=(40, 64, 90),
 )
-teams = [
-    redbull,
-    mercedes,
-    mclaren,
-    haas,
-    alpine,
-    ferrari,
-    williams,
-    alfa_romeo,
-    aston_martin,
-    alpha_tauri
-]
+DEFAULT_TEAM = redbull # FIXME redbull is used as default value, maybe create a fake team instead
 
 teams_idx = {
     'RedBull': redbull,
@@ -162,7 +152,21 @@ teams_idx = {
     'AlphaTauri': alpha_tauri
 }
 
-# --- PILOTS
+# --- DEFAULT TEAMS
+teams = [
+    redbull,
+    mercedes,
+    mclaren,
+    haas,
+    alpine,
+    ferrari,
+    williams,
+    alfa_romeo,
+    aston_martin,
+    alpha_tauri
+]
+
+# --- DEFAULT PILOTS
 pilots = {
     # REDBULL
     'majforti-07': Pilot(name='Majforti07', team=redbull, number='37', title='majforti-07'),

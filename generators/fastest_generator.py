@@ -1,7 +1,7 @@
 from PIL import Image
 from PIL.PngImagePlugin import PngImageFile
 
-from pandas import DataFrame
+from helpers.generator_config import GeneratorConfig
 
 from datetime import datetime, time
 from models import *
@@ -10,26 +10,25 @@ from font_factory import FontFactory
 from generators.abstract_generator import AbstractGenerator
 from helpers.transform import *
 
+
 class FastestGenerator(AbstractGenerator):
-    def __init__(self, race:Race, ranking: DataFrame, filepath: str = './fastest.png'):
-        super().__init__(race, filepath)
+    def __init__(self, config: GeneratorConfig):
+        super().__init__(config)
         ranking_data = []
-        for index, pilot_data in ranking.iterrows():
+        for index, pilot_data in self.config.ranking.iterrows():
             pos = index + 1
             fastest_time = datetime.strptime(pilot_data[3], '%M:%S.%f').time()
             ranking_data.append({
                 'time': fastest_time,
-                'pilot_result': PilotResult(race.get_pilot(pilot_data[0]), pos, pilot_data[1], pilot_data[2]),
+                'pilot_result': PilotResult(self.config.race.get_pilot(pilot_data[0]), pos, pilot_data[1], pilot_data[2]),
             })
         self.ranking = sorted(ranking_data, key=lambda x: x['time'])
 
+    def _get_visual_type(self) -> str:
+        return 'fastest'
 
-    def _add_content(self, final:PngImageFile):
-        visual = Visual(type='fastest', race=self.race)
-
-        title_height = 180
-        title = visual.get_title_image(final.width, title_height)
-        final.paste(title, title)
+    def _add_content(self, final: PngImageFile):
+        title_height = self._get_visual_title_height()
 
         h_padding = 60
         v_padding = 40
@@ -56,16 +55,18 @@ class FastestGenerator(AbstractGenerator):
         # three times the padding : before, between and after
         second_and_third_width = (final.width - h_padding * 3) // 2
         second = self.ranking[1]
-        second_image = self._get_fastest_lap_img(2, second_and_third_width, second_and_third_height, second['time'], second['pilot_result'])
+        second_image = self._get_fastest_lap_img(
+            2, second_and_third_width, second_and_third_height, second['time'], second['pilot_result'])
         second_left = h_padding
         final.paste(second_image, (second_left, second_and_third_top), second_image)
 
         third = self.ranking[2]
-        third_image = self._get_fastest_lap_img(3, second_and_third_width, second_and_third_height, third['time'], third['pilot_result'])
-        third_left = second_left + second_and_third_width + h_padding 
+        third_image = self._get_fastest_lap_img(
+            3, second_and_third_width, second_and_third_height, third['time'], third['pilot_result'])
+        third_left = second_left + second_and_third_width + h_padding
         final.paste(third_image, (third_left, second_and_third_top), third_image)
 
-    def _get_race_img(self, width:int, height: int):
+    def _get_race_img(self, width: int, height: int):
         img = Image.new('RGBA', (width, height), (255, 255, 0, 0))
         bg = Image.new('RGB', (width, height))
         gradient(bg, direction=GradientDirection.LEFT_TO_RIGHT)
@@ -74,9 +75,9 @@ class FastestGenerator(AbstractGenerator):
         circuit_name_top = 20
         circuit_name_color = (255, 255, 255)
         circuit_name_font = FontFactory.regular(60)
-        circuit_name_img = text(self.race.circuit.name, circuit_name_color, circuit_name_font)
+        circuit_name_img = text(self.config.race.circuit.name, circuit_name_color, circuit_name_font)
 
-        with Image.open(f'assets/circuits/flags/{self.race.circuit.id}.png') as flag_img:
+        with Image.open(f'assets/circuits/flags/{self.config.race.circuit.id}.png') as flag_img:
             flag_img = resize(flag_img, width-circuit_name_img.width, circuit_name_img.height)
             space_between = 10
             circuit_name_left = (width - (circuit_name_img.width + flag_img.width + space_between)) // 2
@@ -88,7 +89,7 @@ class FastestGenerator(AbstractGenerator):
         v_padding = 20
         length_color = (180, 180, 180)
         length_font = FontFactory.regular(36)
-        length_img = text(f'Longueur: {self.race.circuit.lap_length} KM', length_color, length_font)
+        length_img = text(f'Longueur: {self.config.race.circuit.lap_length} KM', length_color, length_font)
         length_left = (width - length_img.width) // 2
         length_top = circuit_name_top + circuit_name_img.height + v_padding
         img.paste(length_img, (length_left, length_top), length_img)
@@ -96,12 +97,12 @@ class FastestGenerator(AbstractGenerator):
         map_left = 20
         map_top = length_top + length_img.height + v_padding
         map_height = height - map_top
-        with Image.open(f'assets/circuits/maps/{self.race.circuit.id}.png') as map:
+        with Image.open(f'assets/circuits/maps/{self.config.race.circuit.id}.png') as map:
             map = resize(map, width, map_height)
             img.paste(map, (map_left, map_top), map)
         return img
 
-    def _get_fastest_lap_img(self, position:int, width:int, height:int, time:time, pilot_result:PilotResult):
+    def _get_fastest_lap_img(self, position: int, width: int, height: int, time: time, pilot_result: PilotResult):
         font_size = 200 if position == 1 else 100
         font = FontFactory.bold(font_size)
         img = Image.new('RGBA', (width, height), (255, 255, 0, 0))
@@ -122,11 +123,11 @@ class FastestGenerator(AbstractGenerator):
         img.alpha_composite(team_img, (team_left, 0))
         real_width = max(pos_img.width, txt_img.width) + team_img.width
         real_height = height
-        return img.crop((0,0, real_width, real_height)) if position == 1 else img
+        return img.crop((0, 0, real_width, real_height)) if position == 1 else img
 
     def _get_position_image(self, position, font):
         ext_font = FontFactory.bold(font.size//2)
-        color = (0,0,0,0)
+        color = (0, 0, 0, 0)
         border_color = (255, 255, 255)
         pos = str(position)
         stroke_width = 4
@@ -142,11 +143,11 @@ class FastestGenerator(AbstractGenerator):
         ext_img = text(ext, color, ext_font, stroke_width=stroke_width, stroke_fill=border_color)
 
         width = pos_img.width + ext_img.width
-        height = max(pos_img.height,ext_img.height)
+        height = max(pos_img.height, ext_img.height)
         img = Image.new('RGBA', (width, height), (0, 0, 0, 0))
 
-        img.paste(pos_img, (0,0))
-        img.paste(ext_img, (pos_img.width,0))
+        img.paste(pos_img, (0, 0))
+        img.paste(ext_img, (pos_img.width, 0))
         return img
 
     def _get_textual_image(self, position, lap_time, pilot_result, base_font):
@@ -171,7 +172,7 @@ class FastestGenerator(AbstractGenerator):
             img.paste(add_point_img, (0, 0))
 
         pilot_top = space_between + add_point_img.height if position == 1 else 0
-        img.paste(pilot_img, (0,pilot_top))
+        img.paste(pilot_img, (0, pilot_top))
 
         lap_time_top = pilot_top + pilot_img.height + space_between
         img.paste(lap_time_img, (0, lap_time_top))

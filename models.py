@@ -247,6 +247,7 @@ class Race:
     hour: str
     circuit: Circuit
     pilots: dict
+    teams: list
     swappings: dict = None
 
     def get_total_length(self):
@@ -431,13 +432,13 @@ class Visual:
             img.paste(fbrt, (left, top), fbrt)
 
         # Title
-        if self.type == 'result':
+        if self.type in ('results', 'details'):
             title = self._get_race_result_title(width//3, height)
             top = (height - title.height) // 2 # centered
         elif self.type == 'fastest':
             title = self._get_race_fastest_title(width//3, height)
             top = height // 3
-        elif self.type == 'lineup':
+        elif self.type == 'lineups':
             title = self._get_race_lineup_title(width//3, height)
             top = height // 3
         elif self.type == 'presentation':
