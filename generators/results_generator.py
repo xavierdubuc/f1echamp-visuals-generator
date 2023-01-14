@@ -2,9 +2,8 @@ from PIL import Image
 from PIL.PngImagePlugin import PngImageFile
 
 from generators.abstract_generator import AbstractGenerator
-from helpers.generator_config import FastestLap
 
-from models import Pilot, Race
+from models import Pilot
 from data import DEFAULT_TEAM
 from font_factory import FontFactory
 

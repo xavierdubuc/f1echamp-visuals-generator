@@ -1,11 +1,10 @@
 from PIL import Image
 from PIL.PngImagePlugin import PngImageFile
+from models import PilotResult
 
 from helpers.generator_config import GeneratorConfig
 
 from datetime import datetime, time
-from models import *
-from data import *
 from font_factory import FontFactory
 from generators.abstract_generator import AbstractGenerator
 from helpers.transform import *

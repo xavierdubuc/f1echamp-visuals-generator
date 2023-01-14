@@ -3,9 +3,6 @@ from PIL.PngImagePlugin import PngImageFile
 from generators.abstract_generator import AbstractGenerator
 
 
-from models import *
-from data import *
-
 class LineupGenerator(AbstractGenerator):
     def _get_visual_type(self) -> str:
         return 'lineups'

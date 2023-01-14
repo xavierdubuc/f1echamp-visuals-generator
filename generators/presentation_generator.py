@@ -1,8 +1,7 @@
 from PIL import Image
+from font_factory import FontFactory
 from generators.abstract_generator import AbstractGenerator
 
-from models import *
-from data import *
 from helpers.transform import *
 import textwrap
 

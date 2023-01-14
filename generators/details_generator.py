@@ -1,10 +1,7 @@
-from PIL import Image
+from PIL import Image, ImageDraw
 from PIL.PngImagePlugin import PngImageFile
+from models import PilotResult
 
-from pandas import DataFrame
-
-from models import *
-from data import *
 from font_factory import FontFactory
 from generators.abstract_generator import AbstractGenerator
 
