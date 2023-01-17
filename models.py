@@ -434,16 +434,13 @@ class Visual:
         # Title
         if self.type in ('results', 'details'):
             title = self._get_race_result_title(width//3, height)
-            top = (height - title.height) // 2 # centered
         elif self.type == 'fastest':
             title = self._get_race_fastest_title(width//3, height)
-            top = height // 3
         elif self.type == 'lineups':
             title = self._get_race_lineup_title(width//3, height)
-            top = height // 3
         elif self.type == 'presentation':
             title = self._get_race_presentation_title(width//3, height)
-            top = height // 3
+        top = height // 3
         left = (width - title.width) // 2 # centered
         img.paste(title, (left, top), title)
 
@@ -457,9 +454,23 @@ class Visual:
         return img
 
     def _get_race_result_title(self, width, height):
-        with Image.open(f'assets/race_numbers/Race{self.race.round}.png') as title:
-            title.thumbnail((width, height), Image.Resampling.LANCZOS)
-            return title
+        if len(str(self.race.round)) == 1:
+            font_size = 68
+        else:
+            font_size = 64
+        img = Image.new('RGBA', (width, height), (255, 0, 0, 0))
+        font = FontFactory.bold(font_size)
+        draw_img = ImageDraw.Draw(img)
+        _, _, whole_width, _ = draw_img.textbbox((0, 0), f'Race {self.race.round} Result', font)
+        _, _, race_width, _ = draw_img.textbbox((0, 0), f'Race', font)
+        _, _, number_width, _ = draw_img.textbbox((0, 0), f'{self.race.round}', font)
+        race_left = (width-whole_width) // 2
+        number_left = race_left + race_width + 20
+        fastest_left = number_left + number_width
+        draw_img.text((race_left,0), 'Race', (255, 255, 255), font)
+        draw_img.text((number_left,0), f'{self.race.round}', (255, 0, 0), font)
+        draw_img.text((fastest_left,0), ' Result', (255, 255, 255), font)
+        return img
 
     def _get_race_lineup_title(self, width, height):
         if len(str(self.race.round)) == 1:

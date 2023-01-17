@@ -78,7 +78,7 @@ class Reader:
     def _get_race(self, pilots, teams):
         race_day = self.data['B'][3]
         return Race(
-            round=int(self.data['B'][0]),
+            round=self.data['B'][0],
             laps=int(self.data['B'][2]),
             circuit=circuits[self.data['B'][1]],
             day=race_day.day,
