@@ -11,12 +11,18 @@ from helpers.transform import *
 
 
 class FastestGenerator(AbstractGenerator):
+    DEFAULT_TIME_STR = '--:--.---'
+    DEFAULT_TIME = datetime.strptime('5:59.999','%M:%S.%f').time()
+
     def __init__(self, config: GeneratorConfig):
         super().__init__(config)
         ranking_data = []
         for index, pilot_data in self.config.ranking.iterrows():
             pos = index + 1
-            fastest_time = datetime.strptime(pilot_data[3], '%M:%S.%f').time()
+            if pilot_data[3] == self.DEFAULT_TIME_STR:
+                fastest_time = self.DEFAULT_TIME
+            else:
+                fastest_time = datetime.strptime(pilot_data[3], '%M:%S.%f').time()
             ranking_data.append({
                 'time': fastest_time,
                 'pilot_result': PilotResult(self.config.race.get_pilot(pilot_data[0]), pos, pilot_data[1], pilot_data[2]),
@@ -156,7 +162,10 @@ class FastestGenerator(AbstractGenerator):
 
         pilot_img = text(pilot_result.pilot.name, color, font)
 
-        lap_time_txt = f'{lap_time.minute}:{lap_time.strftime("%S")}.{str(lap_time.microsecond//1000)}'
+        if lap_time == self.DEFAULT_TIME:
+            lap_time_txt = self.DEFAULT_TIME_STR
+        else:
+            lap_time_txt = f'{lap_time.minute}:{lap_time.strftime("%S")}.{str(lap_time.microsecond//1000).zfill(3)}'
         lap_time_img = text(lap_time_txt, color, font)
 
         add_point_img = text('+1 point', (200, 200, 0), small_font)
