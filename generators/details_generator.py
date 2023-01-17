@@ -123,7 +123,8 @@ class DetailsGenerator(AbstractGenerator):
             pilot = self.config.race.get_pilot(pilot_name)
 
             pos = index + 1
-            pilot_result = PilotResult(pilot, pos, pilot_data[1], pilot_data[2])
+            tyres = pilot_data[2] if isinstance(pilot_data[2], str) else ''
+            pilot_result = PilotResult(pilot, pos, pilot_data[1], tyres)
 
             left = first_col_left if index % 2 == 0 else second_col_left
             pilot_result_image = pilot_result.get_details_image(col_width, row_height, maximum_split_size)
