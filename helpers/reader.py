@@ -39,7 +39,13 @@ class Reader:
 
     def _determine_swappings(self, pilots):
         replacements = self.data[~self.data['E'].isna()]
-        return {row['E']: pilots[row['D']] for i, row in replacements.iterrows()}
+        out = {}
+        for _, row in replacements.iterrows():
+            subs = row['E']
+            while out.get(subs) and len(subs) < 22:
+                subs += ' '
+            out[subs] = pilots[row['D']]
+        return out
 
     def _build_pilots_list(self, values: pandas.DataFrame):
         return {
