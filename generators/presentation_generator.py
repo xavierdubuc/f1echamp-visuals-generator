@@ -96,7 +96,7 @@ class PresentationGenerator(AbstractGenerator):
         # circuit flag
         with Image.open(f'assets/circuits/flags/{self.config.race.circuit.id}.png') as flag:
             flag.thumbnail((200,200), Image.Resampling.LANCZOS)
-            img.paste(flag, (hbline_right - flag.width, date_bottom - flag.height), flag)
+            img.paste(flag, (hbline_right - flag.width, (date_bottom - flag.height)//2), flag)
 
         # photo
         img_top = date_bottom + 20
