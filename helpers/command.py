@@ -7,4 +7,4 @@ class Command(argparse.ArgumentParser):
         self.add_argument("type", help="Type de visuel (results, lineup, presentation, fastest, details)")
         self.add_argument("-s", "--sheet", help="Name of the Excel sheet to use", dest='sheet', default='Race 1')
         self.add_argument("-o", "--output", help="Output file to use", dest='output', default=None)
-        self.add_argument("-i", "--input", help="Input file to use", dest='input', default='./data.xlsx')
+        self.add_argument("-i", "--input", help="Input file to use (use 'gsheet:TIMESHEET_ID' for google sheet (replace TIMESHEET_ID with the id of the sheet of course)", dest='input', default='gsheet')

@@ -5,6 +5,7 @@ from generators.fastest_generator import FastestGenerator
 from generators.results_generator import ResultsGenerator
 from generators.lineups_generator import LineupGenerator
 from generators.presentation_generator import PresentationGenerator
+from generators.teams_ranking_generator import TeamsRankingGenerator
 
 
 class Renderer:
@@ -14,6 +15,7 @@ class Renderer:
         'results': ResultsGenerator,
         'details': DetailsGenerator,
         'fastest': FastestGenerator,
+        'teams_ranking': TeamsRankingGenerator,
     }
 
     @classmethod

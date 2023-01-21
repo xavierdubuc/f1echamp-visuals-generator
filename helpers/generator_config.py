@@ -10,6 +10,8 @@ class GeneratorType(enum.Enum):
     Results ='results'
     Details = 'details'
     Fastest = 'fastest'
+    TeamsRanking = 'teams_ranking'
+    PilotsRanking = 'pilots_ranking'
 
 @dataclass
 class FastestLap:
@@ -23,7 +25,7 @@ class GeneratorConfig:
     output: str
     pilots: dict
     teams: list
-    race: Race
+    race: Race = None
     description: str = None
     ranking: pandas.DataFrame = None
     fastest_lap: FastestLap = None

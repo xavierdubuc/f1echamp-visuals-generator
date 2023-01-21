@@ -1,6 +1,5 @@
 from dataclasses import dataclass
 from PIL import Image, ImageDraw
-from config import REGULAR_FONT_PATH, BOLD_FONT_PATH
 from font_factory import FontFactory
 from helpers.transform import GradientDirection, gradient, resize, text_size
 
@@ -12,6 +11,8 @@ class Team:
     main_color: str = 'white'
     secondary_color: str = 'black'
     box_color: str = 'black'
+    standing_bg: str = 'black'
+    standing_fg: str = 'white'
 
     def get_image(self):
         return f'assets/teams/{self.name}.png'
@@ -416,6 +417,14 @@ class Visual:
     type: str
     race: Race
 
+    @staticmethod
+    def get_fbrt_logo():
+        return Image.open('assets/fbrt.png')
+
+    @staticmethod
+    def get_f1_logo(black=False):
+        return Image.open(f'assets/f122{"_black" if black else ""}.png')
+
     def get_title_image(self, width:int, height: int):
         img = Image.new('RGBA', (width, height), (255, 0, 0, 0))
         # background
@@ -425,7 +434,7 @@ class Visual:
             img.paste(bg_top, (0, 0), bg_top)
 
         # FBRT logo
-        with Image.open(f'assets/fbrt.png') as fbrt:
+        with Visual.get_fbrt_logo() as fbrt:
             fbrt.thumbnail((width//3, height), Image.Resampling.LANCZOS)
             left = (width//3 - fbrt.width) // 2 # centered in the left cell
             top = (height-fbrt.height)//2 # centered
@@ -445,8 +454,7 @@ class Visual:
         img.paste(title, (left, top), title)
 
         # F1 22
-        logof1 = 'f122_black' if self.type == 'presentation' else 'f122'
-        with Image.open(f'assets/{logof1}.png') as f122:
+        with Visual.get_f1_logo(self.type == 'presentation') as f122:
             f122.thumbnail((width//4, height), Image.Resampling.LANCZOS)
             left = (width - f122.width) - 40 # right aligned, with a small padding
             top = (height-f122.height)//2 # centered

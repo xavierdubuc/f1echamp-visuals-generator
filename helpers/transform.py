@@ -51,3 +51,12 @@ def text(text:str, text_color, font:ImageFont.FreeTypeFont, stroke_width=0, stro
     draw = ImageDraw.Draw(img)
     draw.text((0, 0), text, text_color, font, stroke_width=stroke_width, stroke_fill=stroke_fill, **kwargs)
     return img
+
+def paste(img:PngImageFile, on_what:PngImageFile, left=False, top=False, with_alpha=None):
+    left = left if left is not False else (on_what.width-img.width) // 2
+    top = top if top is not False else (on_what.height-img.height) // 2
+    if with_alpha is True or (with_alpha is None and img.mode != 'RGB'):
+        on_what.paste(img, (left, top), img)
+    else:
+        on_what.paste(img, (left, top))
+    return (left, top, left+img.width, top+img.height)

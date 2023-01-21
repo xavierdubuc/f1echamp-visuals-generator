@@ -11,7 +11,11 @@ class AbstractGenerator(ABC):
     def generate(self):
         base_img = self._generate_basic_image()
         title_img = self._generate_title_image(base_img)
-        base_img.paste(title_img, title_img)
+        if title_img:
+            if title_img.mode == 'RGB':
+                base_img.paste(title_img)
+            else:
+                base_img.paste(title_img, title_img)
         self._add_content(base_img)
         base_img.save(self.config.output, quality=95)
         return self.config.output
