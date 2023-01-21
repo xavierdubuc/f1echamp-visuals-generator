@@ -121,8 +121,8 @@ class PresentationGenerator(AbstractGenerator):
         # hour text
         draw.text((month_left+hour_h_padding, hour_top+hour_v_padding), self.config.race.hour, color=day_color, font=hour_font)
 
-        # TEXT TODO
-        text_lines = textwrap.wrap(self.config.description, width=62)
+        # TEXT
+        text_lines = textwrap.wrap(self.config.description, width=58)
         top = hour_top+hour_v_padding+70
         for text_line in text_lines:
             draw.text((month_left,  top), text_line, 'white', text_font)
