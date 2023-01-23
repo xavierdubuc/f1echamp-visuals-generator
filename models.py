@@ -396,10 +396,8 @@ class Race:
         if not pilot:
             replaces = self.swappings.get(pilot_name)
             if not replaces:
-                pilot_name = 'Unknown'
-                team = self._default_team # FIXME redbull is used as default value, maybe create a fake team instead
-            else:
-                team = replaces.team
+                return None
+            team = replaces.team
             pilot = Pilot(name=pilot_name, team=team)
         return pilot
 
@@ -530,10 +528,10 @@ class PilotResult:
     split: str
     tyres: str
 
-    def get_details_image(self, width:int, height:int, largest_split_width:int):
+    def get_details_image(self, width:int, height:int, largest_split_width:int, has_fastest_lap:bool=False):
         small_font = FontFactory.regular(32)
         pilot_font = FontFactory.bold(30)
-        pilot_image = self.pilot.get_ranking_image(self.position, width, height, small_font, pilot_font, False)
+        pilot_image = self.pilot.get_ranking_image(self.position, width, height, small_font, pilot_font, has_fastest_lap)
         draw = ImageDraw.Draw(pilot_image)
         split = self.split if (self.position == 1 or self.split in ('NT', 'DSQ')) else f'+{self.split}'
         _,_,real_split_width, split_height = draw.textbbox((0,0), split, small_font)
@@ -544,11 +542,12 @@ class PilotResult:
         draw.text((split_left, (height-split_height)//2), split, (255, 255, 255), small_font)
 
         current_left = split_left+real_split_width + 20
+        padding = -12 if len(self.tyres) <= 5 else -28
         for tyre in self.tyres:
             with Image.open(f'./assets/tyres/{tyre}.png') as tyre_img:
                 tyre_img.thumbnail((height, height))
                 pilot_image.paste(tyre_img, (current_left, 0), tyre_img)
                 # tyre_img has a transparent contour
-                current_left += (tyre_img.width-12)
+                current_left += (tyre_img.width + padding)
 
         return pilot_image

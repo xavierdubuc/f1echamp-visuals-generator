@@ -19,7 +19,7 @@ class FastestGenerator(AbstractGenerator):
         ranking_data = []
         for index, pilot_data in self.config.ranking.iterrows():
             pos = index + 1
-            if pilot_data[3] == self.DEFAULT_TIME_STR:
+            if pilot_data[3] is None or pilot_data[3] == self.DEFAULT_TIME_STR:
                 fastest_time = self.DEFAULT_TIME
             else:
                 fastest_time = datetime.strptime(pilot_data[3], '%M:%S.%f').time()

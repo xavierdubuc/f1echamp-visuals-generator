@@ -114,20 +114,24 @@ class DetailsGenerator(AbstractGenerator):
 
         maximum_split_size = 0
         for _, pilot_data in self.config.ranking.iterrows():
-            _, _, w, h = ImageDraw.Draw(img).textbbox((0, 0), pilot_data[1], small_font)
-            if w > maximum_split_size:
-                maximum_split_size = w
+            if pilot_data[1] is not None:
+                _, _, w, h = ImageDraw.Draw(img).textbbox((0, 0), pilot_data[1], small_font)
+                if w > maximum_split_size:
+                    maximum_split_size = w
         for index, pilot_data in self.config.ranking.iterrows():
             # Get pilot
             pilot_name = pilot_data[0]
             pilot = self.config.race.get_pilot(pilot_name)
 
             pos = index + 1
-            tyres = pilot_data[2] if isinstance(pilot_data[2], str) else ''
-            pilot_result = PilotResult(pilot, pos, pilot_data[1], tyres)
+            if pilot:
+                has_fastest_lap = False # TODO not pretty like this
+                #has_fastest_lap = pilot_name == self.config.fastest_lap.pilot.name
+                tyres = pilot_data[2] if isinstance(pilot_data[2], str) else ''
+                pilot_result = PilotResult(pilot, pos, pilot_data[1], tyres)
 
-            left = first_col_left if index % 2 == 0 else second_col_left
-            pilot_result_image = pilot_result.get_details_image(col_width, row_height, maximum_split_size)
-            img.paste(pilot_result_image, (left, top))
+                left = first_col_left if index % 2 == 0 else second_col_left
+                pilot_result_image = pilot_result.get_details_image(col_width, row_height, maximum_split_size, has_fastest_lap)
+                img.paste(pilot_result_image, (left, top))
             top += hop_between_position
         return img

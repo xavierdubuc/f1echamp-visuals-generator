@@ -54,19 +54,12 @@ class ResultsGenerator(AbstractGenerator):
         for index, pilot_name in enumerate(self.config.ranking):
             # Get pilot
             pilot = self.config.race.get_pilot(pilot_name)
-            if not pilot:
-                replaces = self.config.race.swappings.get(pilot_name)
-                if not replaces:
-                    pilot_name = 'Unknown'
-                    team = DEFAULT_TEAM
-                else:
-                    team = replaces.team
-                pilot = Pilot(name=pilot_name, team=team)
 
             pos = index + 1
             left = first_col_left if index % 2 == 0 else second_col_left
-            has_fastest_lap = pilot_name == self.config.fastest_lap.pilot.name
-            ranking_pilot_image = pilot.get_ranking_image(pos, col_width, row_height, small_font, pilot_font, has_fastest_lap)
-            img.paste(ranking_pilot_image, (left, top))
-            top += hop_between_position
+            if pilot:
+                has_fastest_lap = pilot_name == self.config.fastest_lap.pilot.name
+                ranking_pilot_image = pilot.get_ranking_image(pos, col_width, row_height, small_font, pilot_font, has_fastest_lap)
+                img.paste(ranking_pilot_image, (left, top))
+                top += hop_between_position
         return img
