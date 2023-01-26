@@ -11,8 +11,8 @@ class TeamsRankingGenerator(AbstractGenerator):
         return 'ranking'
 
     def _generate_basic_image(self) -> PngImageFile:
-        width = 1200
-        height = 1800
+        width = 1080
+        height = 1440
         return Image.new('RGB', (width, height), (0,0,0))
 
     def _generate_title_image(self, base_img: PngImageFile) -> PngImageFile:
@@ -24,7 +24,7 @@ class TeamsRankingGenerator(AbstractGenerator):
             logo = resize(logo, logo.width, img.height//2)
             _, _, _, logo_bottom = paste(logo, img, top=10)
 
-        big_txt_font = FontFactory.black(70)
+        big_txt_font = FontFactory.black(65)
         big_txt = text('SEASON 4 TEAM STANDINGS', (0,0,0), big_txt_font)
         _, _, _, big_txt_bottom = paste(big_txt, img, top=logo_bottom+10)
 
@@ -37,10 +37,11 @@ class TeamsRankingGenerator(AbstractGenerator):
 
     def _add_content(self, base_img: PngImageFile):
         title_height = 300
-        width = base_img.width - 100
+        width = base_img.width - 40
         padding_between_rows = 25
         padding_top = 20
         row_height = ((base_img.height - 300 - padding_top) // 10) - padding_between_rows
+        # row_height = 87
         current_top = title_height+padding_top
         for _, row in self.config.ranking.iterrows():
             team_ranking_img = self._get_team_ranking_img(width, row_height, row['Ecurie'], row['Total'])
@@ -62,6 +63,8 @@ class TeamsRankingGenerator(AbstractGenerator):
         return img
 
     def _get_team_img(self, width:int, height: int, team:Team):
+        with Image.open(f'assets/teams/cards/{team.name}.png') as img:
+            return img.copy()
         img = Image.new('RGB', (width, height), team.standing_bg)
         # logo
         with Image.open(team.get_image()) as logo:
