@@ -125,13 +125,12 @@ class DetailsGenerator(AbstractGenerator):
 
             pos = index + 1
             if pilot:
-                has_fastest_lap = False # TODO not pretty like this
-                #has_fastest_lap = pilot_name == self.config.fastest_lap.pilot.name
+                has_fastest_lap = pilot_name == self.config.fastest_lap.pilot.name
                 tyres = pilot_data[2] if isinstance(pilot_data[2], str) else ''
                 pilot_result = PilotResult(pilot, pos, pilot_data[1], tyres)
 
                 left = first_col_left if index % 2 == 0 else second_col_left
-                pilot_result_image = pilot_result.get_details_image(col_width, row_height, maximum_split_size, has_fastest_lap)
+                pilot_result_image = pilot_result.get_details_image(col_width, row_height, maximum_split_size, has_fastest_lap, with_fastest_img=False)
                 img.paste(pilot_result_image, (left, top))
             top += hop_between_position
         return img

@@ -186,7 +186,7 @@ class Pilot:
 
         return img
 
-    def get_ranking_image(self, position:int, width: int, height: int, number_font, pilot_font, has_fastest_lap:bool = False):
+    def get_ranking_image(self, position:int, width: int, height: int, number_font, pilot_font, has_fastest_lap:bool = False, with_fastest_img:bool=True):
         img = Image.new('RGBA', (width, height), (255, 0, 0, 0))
 
         if has_fastest_lap:
@@ -206,7 +206,7 @@ class Pilot:
 
         pilot_image = self.get_image(width - (white_box_width+15), height, number_font, pilot_font)
         img.paste(pilot_image, (white_box_width+15, 0), pilot_image)
-        if has_fastest_lap:
+        if has_fastest_lap and with_fastest_img:
             with Image.open(f'assets/fastest_lap.png') as fstst_img:
                 fstst_img.thumbnail((height, height), Image.Resampling.LANCZOS)
                 img.paste(fstst_img, (width-fstst_img.width * 2, 0))
@@ -528,10 +528,10 @@ class PilotResult:
     split: str
     tyres: str
 
-    def get_details_image(self, width:int, height:int, largest_split_width:int, has_fastest_lap:bool=False):
+    def get_details_image(self, width:int, height:int, largest_split_width:int, has_fastest_lap:bool=False, with_fastest_img:bool=True):
         small_font = FontFactory.regular(32)
         pilot_font = FontFactory.bold(30)
-        pilot_image = self.pilot.get_ranking_image(self.position, width, height, small_font, pilot_font, has_fastest_lap)
+        pilot_image = self.pilot.get_ranking_image(self.position, width, height, small_font, pilot_font, has_fastest_lap, with_fastest_img)
         draw = ImageDraw.Draw(pilot_image)
         split = self.split if (self.position == 1 or self.split in ('NT', 'DSQ')) else f'+{self.split}'
         _,_,real_split_width, split_height = draw.textbbox((0,0), split, small_font)
