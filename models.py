@@ -252,7 +252,7 @@ class Race:
     swappings: dict = None
 
     def get_total_length(self):
-        return self.laps * self.circuit.lap_length
+        return '{:.3f}'.format(self.laps * self.circuit.lap_length)
 
     def get_title(self):
         return f'RACE {self.round} RESULT'
