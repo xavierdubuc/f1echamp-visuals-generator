@@ -1,5 +1,6 @@
 from PIL import Image, ImageDraw
 from PIL.PngImagePlugin import PngImageFile
+from helpers.transform import *
 from models import PilotResult
 
 from font_factory import FontFactory
@@ -19,36 +20,35 @@ class DetailsGenerator(AbstractGenerator):
         title_height = self._get_visual_title_height()
         top_h_padding = 20
         available_width = final.width - 2 * top_h_padding
+        subtitle_image = self._get_subtitle_image(available_width, 90)
+        subt_dimension = paste(subtitle_image, final, 10, title_height + top_h_padding, use_obj=True)
 
-        race_title_top = title_height + top_h_padding
-        race_title_width = int(0.3 * available_width - top_h_padding)
-        sub_title_height = 90
-        date_font = FontFactory.regular(30)
-        race_title_font = FontFactory.regular(50)
-
-        # race_title_image = self.config.race.circuit.get_title_image(sub_title_height, race_title_font)
-        race_title_image = self.config.race.get_title_image_simple(
-            race_title_width, sub_title_height, date_font, race_title_font)
-        race_title_left = 15
-        final.paste(race_title_image, (race_title_left, race_title_top), race_title_image)
-
-        fastest_lap_top = title_height + top_h_padding
-        fastest_lap_left = race_title_width
-        fastest_lap_width = int(0.7 * available_width - top_h_padding)
-        fastest_lap_height = 90
-        fastest_lap_img = self._get_fastest_lap_image(fastest_lap_width, fastest_lap_height)
-        final.paste(fastest_lap_img, (fastest_lap_left, fastest_lap_top), fastest_lap_img)
-
-        rankings_top = fastest_lap_top + fastest_lap_height + 30
+        rankings_top = subt_dimension.bottom + 30
         rankings_height = final.height - rankings_top
         rankings_img = self._get_ranking_image(final.width, rankings_height)
         final.paste(rankings_img, (0, rankings_top), rankings_img)
 
+    def _get_subtitle_image(self, width: int, height: int):
+        img = Image.new('RGBA', (width, height), (0, 0, 0 ,0))
+        padding = 20
+        race_title_width = int(0.3 * width - padding)
+        date_font = FontFactory.regular(30)
+        race_title_font = FontFactory.regular(50)
+
+        race_title_image = self.config.race.get_title_image_simple(race_title_width, height, date_font, race_title_font)
+        race_dimension = paste(race_title_image, img, left=0, use_obj=True)
+
+        fastest_lap_left = race_dimension.right + 20
+        fastest_lap_width = width - padding - race_title_image.width
+        fastest_lap_img = self._get_fastest_lap_image(fastest_lap_width, height)
+        paste(fastest_lap_img, img, fastest_lap_left)
+        return img
+
     def _get_fastest_lap_image(self, width: int, height: int):
-        img = Image.new('RGBA', (width, height), (255, 0, 0, 0))
+        img = Image.new('RGBA', (width, height), (0, 0, 0, 0))
         with Image.open(f'assets/fastest_lap.png') as fstst_img:
-            fstst_img.thumbnail((height, height), Image.Resampling.LANCZOS)
-            img.paste(fstst_img)
+            fstst_img = resize(fstst_img, height, height)
+            paste(fstst_img, img, 0)
 
         draw = ImageDraw.Draw(img)
         text_font = FontFactory.bold(40)
