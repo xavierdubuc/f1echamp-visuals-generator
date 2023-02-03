@@ -416,8 +416,8 @@ class Visual:
     race: Race
 
     @staticmethod
-    def get_fbrt_logo():
-        return Image.open('assets/fbrt.png')
+    def get_fbrt_logo(no_border=False):
+        return Image.open(f'assets/fbrt{"_no_border" if no_border else ""}.png')
 
     @staticmethod
     def get_f1_logo(black=False):
