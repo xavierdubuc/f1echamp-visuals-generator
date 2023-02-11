@@ -3,6 +3,8 @@ from PIL.PngImagePlugin import PngImageFile
 from PIL import Image, ImageDraw, ImageFont
 from enum import Enum
 
+from font_factory import FontFactory
+
 @dataclass
 class Dimension():
     left: int
@@ -69,3 +71,24 @@ def paste(img:PngImageFile, on_what:PngImageFile, left=False, top=False, with_al
     if not use_obj:
         return (left, top, left+img.width, top+img.height)
     return Dimension(left, top, left+img.width, top+img.height)
+
+def get_max_font_size(text, width, height, Font=FontFactory.regular, initial_font_size=20):
+    img = Image.new('RGB', (width, height))
+    return determine_font_size(text, img, Font, initial_font_size)
+
+def determine_font_size(text, img, Font=FontFactory.regular, initial_font_size=20):
+    font_size = initial_font_size
+    txt_width, txt_height = text_size(text, Font(font_size), img)
+    height_offset = 10
+    is_ascending = False
+    while txt_width <= img.width-height_offset and txt_height <= img.height-height_offset:
+        is_ascending = True
+        font_size += 1
+        txt_width, txt_height = text_size(text, Font(font_size), img)
+    if is_ascending:
+        return font_size - 1
+
+    while txt_width >= img.width or txt_height >= img.height:
+        font_size -= 1
+        txt_width, txt_height = text_size(text, Font(font_size), img)
+    return font_size
