@@ -24,12 +24,12 @@ class TeamsRankingGenerator(AbstractGenerator):
             logo = resize(logo, logo.width, img.height//2)
             _, _, _, logo_bottom = paste(logo, img, top=10)
 
-        big_txt_font = FontFactory.black(65)
-        big_txt = text('SEASON 4 TEAM STANDINGS', (0,0,0), big_txt_font)
+        big_txt_font = FontFactory.black(60)
+        big_txt = text(self.config.ranking_title, (0,0,0), big_txt_font)
         _, _, _, big_txt_bottom = paste(big_txt, img, top=logo_bottom+10)
 
         small_txt_font = FontFactory.regular(30)
-        small_txt = text('AFTER 5 RACES', (0,0,0), small_txt_font)
+        small_txt = text(self.config.ranking_subtitle, (0,0,0), small_txt_font)
         paste(small_txt, img, top=big_txt_bottom+20)
 
         return img

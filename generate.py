@@ -18,7 +18,7 @@ _logger = logging.getLogger(__name__)
 
 args = Command().parse_args()
 if args.type in GENERAL_RANKING_TYPES:
-    config = GeneralRankingReader(args.type, args.input, args.output).read()
+    config = GeneralRankingReader(args.type, args.input, args.output, args.season).read()
 else:
     config = Reader(args.type, args.input, args.sheet, args.output).read()
 output_filepath = Renderer.render(config)

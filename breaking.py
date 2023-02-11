@@ -95,7 +95,6 @@ class Renderer:
         draw.polygon(upper_triangle, (0,0,0,0))
         draw.polygon(lower_triangle, (0,0,0,0))
 
-        print(height)
         if self.team:
             with Image.open(self.team.get_image()) as team_img:
                 paste(resize(team_img, 175, 175), img, width-team_img.width-30, height-team_img.height)
