@@ -49,7 +49,8 @@ class Renderer:
         bottom_img = self._get_bottom_message_img(bg.width, bottom_message_height)
         bottom_dim = paste(bottom_img, final, left=0, top=middle_dim.bottom+space_bottom_middle)
 
-        final.save(args.output or 'breaking.png', quality=95)
+        final.save(self.output or 'breaking.png', quality=95)
+        return self.output
 
     def _get_top_breaking_img(self, width:int, height:int):
         img = Image.new('RGBA', (width, height), (255, 255, 255, 0))
@@ -120,6 +121,7 @@ class Renderer:
 
 ####### MAIN
 
-args = BreakingCommand().parse_args()
-Renderer(args.main, args.second, args.team, args.bg, args.fg, args.output, args.input).render()
+if __name__ == "__main__":
+    args = BreakingCommand().parse_args()
+    Renderer(args.main, args.second, args.team, args.bg, args.fg, args.output, args.input).render()
 
