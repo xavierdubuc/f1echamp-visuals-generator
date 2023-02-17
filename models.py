@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from PIL import Image, ImageDraw
 from font_factory import FontFactory
-from helpers.transform import GradientDirection, gradient, resize, text_size
+from helpers.transform import GradientDirection, gradient, resize, text_size, paste
 
 @dataclass
 class Team:
@@ -55,11 +55,8 @@ class Team:
         with Image.open(self.get_image()) as team_image:
             padding = 4
             image_size = box_height - padding
-            left = width - team_image.width
-            top = 0
             team_image = resize(team_image, image_size, image_size)
-            team_image.thumbnail((image_size, image_size), Image.Resampling.LANCZOS)
-            img.paste(team_image, (left, top), team_image)
+            paste(team_image, img, left=width -  team_image.width- 10)
 
         return img
 
