@@ -1,3 +1,4 @@
+import os
 from PIL import Image
 from PIL.PngImagePlugin import PngImageFile
 from models import PilotResult
@@ -32,44 +33,52 @@ class FastestGenerator(AbstractGenerator):
     def _get_visual_type(self) -> str:
         return 'fastest'
 
-    def _add_content(self, final: PngImageFile):
-        title_height = self._get_visual_title_height()
-
-        h_padding = 60
-        v_padding = 40
-        first_top = title_height + v_padding
-        content_width = (final.width - h_padding * 3)
-        content_height = final.height - first_top
-        first_height = (content_height // 2)
-
+    def _get_first_line_img(self, width:int, height:int) -> PngImageFile:
         # RACE
-        race_left = h_padding
-        race_width = content_width // 4
-        first_width = content_width - race_width
-        race_image = self._get_race_img(race_width, first_height)
-        final.paste(race_image, (race_left, first_top), race_image)
+        h_padding = 40
+        img = Image.new('RGBA', (width, height), (0,0,0,0))
+        elements_width = (width-h_padding)
+        race_width = elements_width // 4
+        first_width = elements_width - race_width
+        race_image = self._get_race_img(race_width, height)
+        race_pos = paste(race_image, img, left=0, use_obj=True)
 
         # FIRST
         first = self.ranking[0]
-        first_image = self._get_fastest_lap_img(1, first_width, first_height, first['time'], first['pilot_result'])
-        first_left = race_left + race_width + h_padding
-        final.paste(first_image, (first_left, first_top), first_image)
+        first_image = self._get_fastest_lap_img(1, first_width, height, first['time'], first['pilot_result'])
+        paste(first_image, img, left=race_pos.right + h_padding)
 
-        second_and_third_top = first_top + first_height + v_padding
-        second_and_third_height = content_height - first_height - v_padding
-        # three times the padding : before, between and after
-        second_and_third_width = (final.width - h_padding * 3) // 2
+        return img
+
+    def _get_second_line_img(self, width:int, height:int) -> PngImageFile:
+        h_padding = 40
+        img = Image.new('RGBA', (width, height), (0,0,0,0))
+        elements_width = (width-h_padding)
+
+        # 2nd
+        second_width = elements_width // 2
         second = self.ranking[1]
-        second_image = self._get_fastest_lap_img(
-            2, second_and_third_width, second_and_third_height, second['time'], second['pilot_result'])
-        second_left = h_padding
-        final.paste(second_image, (second_left, second_and_third_top), second_image)
+        second_image = self._get_fastest_lap_img(2, second_width, height, second['time'], second['pilot_result'])
+        second_pos = paste(second_image, img, left=0, top=0, use_obj=True)
 
+        # 3rd
+        third_width = elements_width - second_width
         third = self.ranking[2]
-        third_image = self._get_fastest_lap_img(
-            3, second_and_third_width, second_and_third_height, third['time'], third['pilot_result'])
-        third_left = second_left + second_and_third_width + h_padding
-        final.paste(third_image, (third_left, second_and_third_top), third_image)
+        third_image = self._get_fastest_lap_img(3, third_width, height, third['time'], third['pilot_result'])
+        paste(third_image, img, left=second_pos.right + h_padding)
+
+        return img
+
+    def _add_content(self, final: PngImageFile):
+        v_padding = 40
+        h_padding = 60
+        title_height = self._get_visual_title_height()
+        remaining_height = final.height - title_height - 3 * v_padding
+        width = final.width - h_padding * 2
+        first_line_img = self._get_first_line_img(width, remaining_height // 2)
+        first_line_pos = paste(first_line_img, final, left=h_padding, top=title_height+v_padding, use_obj = True)
+        second_line_img = self._get_second_line_img(width, remaining_height // 2)
+        paste(second_line_img, final, left=h_padding, top=first_line_pos.bottom+v_padding)
 
     def _get_race_img(self, width: int, height: int):
         img = Image.new('RGBA', (width, height), (255, 255, 0, 0))
@@ -107,28 +116,36 @@ class FastestGenerator(AbstractGenerator):
             img.paste(map, (map_left, map_top), map)
         return img
 
-    def _get_fastest_lap_img(self, position: int, width: int, height: int, time: time, pilot_result: PilotResult):
+    def _get_fastest_lap_img(self, position: int, width: int, height: int, lap_time: time, pilot_result: PilotResult):
+        h_padding = 20
         font_size = 200 if position == 1 else 100
         font = FontFactory.bold(font_size)
-        img = Image.new('RGBA', (width, height), (255, 255, 0, 0))
+        img = Image.new('RGBA', (width, height), (0, 0, 0, 0))
         bg = Image.new('RGB', (width, height))
         gradient(bg, direction=GradientDirection.RIGHT_TO_LEFT)
         img.paste(bg)
 
+        left_part_width = int(0.4 * width)
+        left_part_img = self._get_left_fastest_lap_img(position, left_part_width, height, lap_time, pilot_result)
+        left_part_pos = paste(left_part_img, img, left=0, use_obj=True)
+
+        right_part_width = width - left_part_width - h_padding
+        team_img = self._get_team_image(right_part_width, height, pilot_result, position)
+        paste(team_img, img, left=left_part_pos.right+h_padding)
+        # img.alpha_composite(team_img, (team_left, 0))
+        return img
+
+    def _get_left_fastest_lap_img(self, position:int, width:int, height:int, lap_time:time, pilot_result: PilotResult):
+        v_padding = 20
+        img = Image.new('RGBA', (width, height), (0, 0, 0, 0))
+        font_size = 150 if position == 1 else 100
+        font = FontFactory.bold(font_size)
         pos_img = self._get_position_image(position, font)
-        img.alpha_composite(pos_img)
+        paste(pos_img, img, left=0, top=0, use_obj=True)
 
-        txt_left = 0
-        txt_img = self._get_textual_image(position, time, pilot_result, font)
-        txt_top = height - txt_img.height - 20
-        img.alpha_composite(txt_img, (txt_left, txt_top))
-
-        team_left = txt_left + txt_img.width + 40
-        team_img = self._get_team_image(pilot_result, position, font, max_height=height, max_width=width-team_left)
-        img.alpha_composite(team_img, (team_left, 0))
-        real_width = max(pos_img.width, txt_img.width) + team_img.width
-        real_height = height
-        return img.crop((0, 0, real_width, real_height)) if position == 1 else img
+        txt_img = self._get_textual_image(position, lap_time, pilot_result, font)
+        paste(txt_img, img, left=0, top=height-txt_img.height-v_padding)
+        return img
 
     def _get_position_image(self, position, font):
         ext_font = FontFactory.bold(font.size//2)
@@ -176,7 +193,7 @@ class FastestGenerator(AbstractGenerator):
         width = max(pilot_img.width, lap_time_img.width, add_point_img.width)
         img = Image.new('RGBA', (width, height), (0, 0, 0, 0))
 
-        if position == 1:
+        if position == 1 and pilot_result.position <= 10:
             img.paste(add_point_img, (0, 0))
 
         pilot_top = space_between + add_point_img.height if position == 1 else 0
@@ -187,15 +204,26 @@ class FastestGenerator(AbstractGenerator):
 
         return img
 
-    def _get_team_image(self, pilot_result, position, font, max_height, max_width):
-        team = pilot_result.pilot.team
-        with Image.open(f'assets/team_pilots/{team.name}.png') as team_pilot_img:
-            team_pilot_img.thumbnail((max_width, max_height), Image.Resampling.LANCZOS)
-            width = team_pilot_img.width
-            img = Image.new('RGBA', (width, max_height), (0, 0, 0, 0))
-            img.paste(team_pilot_img, (width - team_pilot_img.width, max_height - team_pilot_img.height), team_pilot_img)
+    def _get_team_image(self, width, height, pilot_result, position):
+        img = Image.new('RGBA', (width, height), (0,0,0,0))
+        pilot = pilot_result.pilot
+        team = pilot.team
+        possible_img_paths = [
+            f'assets/pilots/real_no_bg/{pilot.name}.png',
+            f'assets/pilots/real/{pilot.name}.png',
+            f'assets/pilots/1080x1080/{pilot.name}.png',
+            f'assets/pilots/1080x1080/{team.name}_default.png',
+            f'assets/team_pilots/{team.name}.png'
+        ]
+        for img_path in possible_img_paths:
+            if os.path.exists(img_path):
+                break
+
+        with Image.open(img_path) as team_pilot_img:
+            team_pilot_img.thumbnail((width, height), Image.Resampling.LANCZOS)
+            paste(team_pilot_img, img, left=0, use_obj=True)
 
         team_font = FontFactory.bold(50 if position == 1 else 30)
-        team_img = pilot_result.pilot.team.get_team_image(team_pilot_img.width, team_font)
-        img.alpha_composite(team_img, (width - team_img.width, img.height-team_img.height))
+        team_img = pilot_result.pilot.team.get_team_image(width, team_font)
+        paste(team_img, img, left=0, top=height-team_img.height)
         return img
