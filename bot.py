@@ -25,10 +25,19 @@ command_sync_flags.sync_commands_debug = True
 
 bot = commands.InteractionBot(command_sync_flags=command_sync_flags)
 
+FBRT_GUILD_ID = 923505034778509342
+FBRT_BOT_CHAN_ID = 1074632856443289610
 
 @bot.event
 async def on_ready():
+    await bot.get_guild(FBRT_GUILD_ID).get_channel(FBRT_BOT_CHAN_ID).send('Mesdames messieurs bonsoir !')
     print('Connected !')
+
+@bot.event
+async def on_message(msg):
+    if bot.user.mentioned_in(msg) and not msg.mention_everyone:
+        await msg.channel.send("Vous m'avez appelé ? Ne vous en faites Gaëtano est là ! J'vous ai déjà parlé de mon taximan brésilien ?")
+
 
 @bot.slash_command(name="rankings", description='Team ranking')
 async def rankings(inter,
@@ -91,6 +100,8 @@ async def breaking(inter,
         await inter.followup.send(file=picture)
         _logger.info('Image sent !')
 
+original_error_handler = bot.on_slash_command_error
+
 async def on_slash_command_error(inter:disnake.ApplicationCommandInteraction, exception):
     what = inter.filled_options.get('what')
     await inter.delete_original_message()
@@ -98,6 +109,8 @@ async def on_slash_command_error(inter:disnake.ApplicationCommandInteraction, ex
         await inter.channel.send("Une erreur est survenue dans la génération, êtes-vous sûr que la Google Sheet est bien remplie ? Si oui, contactez Xion.")
     else:
         await inter.channel.send('Une erreur est survenue dans la génération, contactez Xion.')
+    _logger.exception(exception)
+    await original_error_handler(inter, exception)
 
 bot.on_slash_command_error = on_slash_command_error
 
