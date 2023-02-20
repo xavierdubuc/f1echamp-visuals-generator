@@ -57,7 +57,7 @@ class Reader:
             subs = row['E']
             while out.get(subs) and len(subs) < 22:
                 subs += ' '
-            out[subs] = pilots[row['D']]
+            out[subs] = pilots.get(row['D'])
         return out
 
     def _build_pilots_list(self, values: pandas.DataFrame):
@@ -134,7 +134,7 @@ class Reader:
 
     def _get_sheet_names_from_gsheet(self, spreadsheet):
         res = spreadsheet.get(spreadsheetId=self.spreadsheet_id).execute()
-        return [s['properties']['title'] for s in res['sheets'] if not s['properties'].get('hidden')]
+        return [s['properties']['title'] for s in res['sheets']]
 
     def _get_values_sheet_from_gsheet(self, spreadsheet):
         sheet_names = self._get_sheet_names_from_gsheet(spreadsheet)
