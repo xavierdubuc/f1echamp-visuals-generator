@@ -34,8 +34,8 @@ async def on_ready():
     print('Connected !')
 
 @bot.event
-async def on_message(msg):
-    if bot.user.mentioned_in(msg) and not msg.mention_everyone:
+async def on_message(msg:disnake.Message):
+    if bot.user.mentioned_in(msg) and not msg.mention_everyone and msg.type != disnake.MessageType.reply:
         await msg.channel.send("Vous m'avez appelé ? Ne vous en faites Gaëtano est là ! J'vous ai déjà parlé de mon taximan brésilien ?")
 
 
