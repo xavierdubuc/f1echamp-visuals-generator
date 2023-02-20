@@ -193,7 +193,7 @@ class FastestGenerator(AbstractGenerator):
         width = max(pilot_img.width, lap_time_img.width, add_point_img.width)
         img = Image.new('RGBA', (width, height), (0, 0, 0, 0))
 
-        if position == 1 and pilot_result.position <= 10:
+        if position == 1 and pilot_result.position <= 14:
             img.paste(add_point_img, (0, 0))
 
         pilot_top = space_between + add_point_img.height if position == 1 else 0
@@ -209,9 +209,9 @@ class FastestGenerator(AbstractGenerator):
         pilot = pilot_result.pilot
         team = pilot.team
         possible_img_paths = [
+            f'assets/pilots/1080x1080/{pilot.name}.png',
             f'assets/pilots/real_no_bg/{pilot.name}.png',
             f'assets/pilots/real/{pilot.name}.png',
-            f'assets/pilots/1080x1080/{pilot.name}.png',
             f'assets/pilots/1080x1080/{team.name}_default.png',
             f'assets/team_pilots/{team.name}.png'
         ]
