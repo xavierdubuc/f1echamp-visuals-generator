@@ -47,7 +47,7 @@ class Reader:
         if self.type in ('results', 'details', 'fastest'):
             config.ranking = self._get_ranking()
         if self.type in ('results', 'details'):
-            config.fastest_lap = self._get_fastest_lap(pilots)
+            config.fastest_lap = self._get_fastest_lap(race)
         return config
 
     def _determine_swappings(self, pilots):
@@ -118,7 +118,7 @@ class Reader:
             ranking_cols = 'I'
         return self.data[ranking_cols][:20]
 
-    def _get_fastest_lap(self, pilots:dict):
+    def _get_fastest_lap(self, race:Race):
         vals = {'pilot_name': self.data['G'][22]}
         if self.type == 'details':
             vals.update({
@@ -127,7 +127,7 @@ class Reader:
             )
 
         return FastestLap(
-            pilot=pilots.get(vals['pilot_name']),
+            pilot=race.get_pilot(vals['pilot_name']),
             lap=vals.get('lap'),
             time=vals.get('time')
         )

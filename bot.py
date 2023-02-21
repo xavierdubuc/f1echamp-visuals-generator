@@ -115,4 +115,4 @@ async def on_slash_command_error(inter:disnake.ApplicationCommandInteraction, ex
 bot.on_slash_command_error = on_slash_command_error
 
 _logger.info('Starting...')
-bot.run('MTA3NDM3NzU3NTgwNTIyNzE5OQ.GCSj-L.J9Hth8st3kLpha2f1L76A13RZ2KNS9mYzS6QuI')
+bot.run('MTA3NDM3NzU3NTgwNTIyNzE5OQ.GIyHdp.oQM7BPINYN4oP7LWfmE0PDhFLYFSb_8rlyGd_4')
