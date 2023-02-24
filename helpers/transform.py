@@ -61,6 +61,10 @@ def text(text:str, text_color, font:ImageFont.FreeTypeFont, stroke_width=0, stro
     draw.text((0, 0), text, text_color, font, stroke_width=stroke_width, stroke_fill=stroke_fill, **kwargs)
     return img
 
+def rotated_text(txt_str:str, text_color, font:ImageFont.FreeTypeFont, stroke_width=0, stroke_fill=None, angle=15, **kwargs):
+    txt = text(txt_str, text_color, font, stroke_width, stroke_fill)
+    return txt.rotate(angle, expand=True)
+
 def paste(img:PngImageFile, on_what:PngImageFile, left=False, top=False, with_alpha=None, use_obj=False):
     left = left if left is not False else (on_what.width-img.width) // 2
     top = top if top is not False else (on_what.height-img.height) // 2
@@ -92,3 +96,60 @@ def determine_font_size(text, img, Font=FontFactory.regular, initial_font_size=2
         font_size -= 1
         txt_width, txt_height = text_size(text, Font(font_size), img)
     return font_size
+
+def draw_lines(img: PngImageFile, color:tuple, space_between_lines=7, line_width=2):
+    draw = ImageDraw.Draw(img)
+    for i in range(space_between_lines, img.height, space_between_lines):
+        draw.line(((0, i), (i, 0)), fill=color, width=line_width)
+    offset = 1+i+space_between_lines-img.height
+    diff = abs(img.height-img.width)
+    max_dim = img.width if img.width > img.height else img.height
+    for i in range(offset+1, max_dim, space_between_lines):
+        draw.line(((i, img.height), (img.width, diff+i)), fill=color, width=line_width)
+
+def repeat_text(base: PngImageFile, color:tuple, txt: str, Font=FontFactory.regular, font_size=120, angle=15):
+    img = Image.new('RGBA', (int(1.5*base.width), int(1.5*base.height)), (0,0,0,0))
+    font = Font(font_size)
+    current_txt = txt
+    width, height = text_size(current_txt, font, img)
+    while width < img.width:
+        current_txt = f'{current_txt} {txt}'
+        width, height = text_size(current_txt, font, img)
+
+    # current_txt = f'{current_txt} {txt}'
+    space_between_rows = -25
+    vertical_amount = 1 + ((img.height+space_between_rows) // height)
+    top = 0
+    for i in range(vertical_amount):
+        randomized_txt = f'{current_txt[i%4:]}{current_txt[:i%4]}'
+        current_txt_img = text(randomized_txt, color, font)
+        current_txt_pos = paste(current_txt_img, img, top=top, left=0, use_obj=True)
+        top = current_txt_pos.bottom + space_between_rows
+    img = img.rotate(angle, expand=True)
+    paste(img, base)
+
+def get_ordinal_img(i: int, Font=FontFactory.regular, font_size=24, color=(255, 255, 255), sup_font_size=None):
+    font = Font(font_size)
+    txt = _pos_to_ordinal(i)
+    txt_width, txt_height = text_size(txt, font)
+    img = Image.new('RGBA', (txt_width, txt_height), (0,0,0,0))
+
+    sup_font_size = sup_font_size or font_size-10
+    sup_font = Font(sup_font_size)
+
+    # print number
+    number_img = text(str(i), color, font)
+    position_pos = paste(number_img, img, left=0, use_obj=True)
+
+    # print ordinal
+    ordinal_img = text(_pos_to_ordinal_suffix(i), color, sup_font)
+    paste(ordinal_img, img, left=position_pos.right, top=0)
+    return img
+
+
+def _pos_to_ordinal_suffix(n):
+    suffix = {1: 'ST', 2: 'ND', 3: 'RD'}.get(4 if 10 <= n % 100 < 20 else n % 10, "TH")
+    return f'{suffix}'
+
+def _pos_to_ordinal(n):
+    return f'{n}{_pos_to_ordinal_suffix(n)}'
