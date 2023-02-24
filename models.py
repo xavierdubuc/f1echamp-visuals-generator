@@ -13,6 +13,8 @@ class Team:
     box_color: str = 'black'
     standing_bg: str = 'black'
     standing_fg: str = 'white'
+    breaking_bg_color: tuple = (255,255,255)
+    breaking_line_color: tuple = (0,0,0)
 
     def get_image(self):
         return f'assets/teams/{self.name}.png'

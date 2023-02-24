@@ -65,7 +65,9 @@ redbull = Team(
     secondary_color=(0, 0, 186),
     box_color=(0, 0, 186),
     standing_bg=(22, 24, 95),
-    standing_fg=(255, 255, 255)
+    standing_fg=(255, 255, 255),
+    breaking_bg_color=(25, 26, 93),
+    breaking_line_color=(15, 16, 83)
 )
 mercedes = Team(
     name='Mercedes',
