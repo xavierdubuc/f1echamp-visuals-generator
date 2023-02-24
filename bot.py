@@ -1,6 +1,7 @@
 import logging
 import disnake
 from disnake.ext import commands
+from datetime import datetime
 
 from helpers.reader import Reader
 from helpers.general_ranking_reader import GeneralRankingReader
@@ -30,7 +31,8 @@ FBRT_BOT_CHAN_ID = 1074632856443289610
 
 @bot.event
 async def on_ready():
-    await bot.get_guild(FBRT_GUILD_ID).get_channel(FBRT_BOT_CHAN_ID).send('Mesdames messieurs bonsoir !')
+    msg = f'Mesdames messieurs {"bonjour" if 5 < datetime.now().hour < 17 else "bonsoir"} !'
+    await bot.get_guild(FBRT_GUILD_ID).get_channel(FBRT_BOT_CHAN_ID).send(msg)
     print('Connected !')
 
 @bot.event
@@ -39,11 +41,11 @@ async def on_message(msg:disnake.Message):
         await msg.channel.send("Vous m'avez appelé ? Ne vous en faites Gaëtano est là ! J'vous ai déjà parlé de mon taximan brésilien ?")
 
 
-@bot.slash_command(name="rankings", description='Team ranking')
+@bot.slash_command(name="rankings", description='Rankings')
 async def rankings(inter,
         what: str = commands.Param(name="what", choices=["teams", "pilots"], description="Teams pour le classement des équipes, pilots pour les pilotes")
     ):
-    _logger.info('Rankings command called.')
+    _logger.info(f'{inter.user.display_name} called Rankings(what={what})')
     await inter.response.defer()
 
     _logger.info('Reading google sheet')
@@ -57,11 +59,11 @@ async def rankings(inter,
         _logger.info('Image sent !')
 
 @bot.slash_command(name="race", description='Race information')
-async def race(inter,
-        race_number: int = commands.Param(name="race_number", description='Le numéro de la course', ge=1, le=12),
+async def race(inter:disnake.ApplicationCommandInteraction,
+        race_number: str = commands.Param(name="race_number", description='Le numéro de la course'),
         what: str = commands.Param(name="what", choices=['lineup', 'presentation', 'results', 'details', 'fastest'])
     ):
-    _logger.info('Race command called.')
+    _logger.info(f'{inter.user.display_name} called Race(race_number={race_number}, what={what})')
     sheet_name = f'Race {race_number}'
     await inter.response.defer()
 
@@ -86,7 +88,7 @@ async def breaking(inter,
         background: str=commands.Param(name='background', default='255,255,255', description="La couleur de fond à utiliser (au format R,G,B ou R,G,B,A), ignoré si le paramètre team est présent"),
         foreground: str=commands.Param(name='foreground', default='0,0,0', description="La couleur du texte (au format R,G,B ou R,G,B,A), ignoré si le paramètre team est présent")
     ):
-    _logger.info('Breaking command called.')
+    _logger.info(f'{inter.user.display_name} called Breaking(main_txt={main_txt}, secondary_txt={secondary_txt}, team={team}, bg={background}, fg={foreground})')
     await inter.response.defer()
 
     _logger.info('Rendering image...')
