@@ -14,7 +14,7 @@ class Dimension():
 
 class GradientDirection(Enum):
     UP_TO_DOWN = -2
-    DOWN_TO_UP = 2
+    DOWN_TO_UP = 0
     LEFT_TO_RIGHT = -1
     RIGHT_TO_LEFT = 1
 
