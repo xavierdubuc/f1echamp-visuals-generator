@@ -1,5 +1,6 @@
 from helpers.generator_config import GeneratorConfig
 
+from generators.pole_generator import PoleGenerator
 from generators.details_generator import DetailsGenerator
 from generators.fastest_generator import FastestGenerator
 from generators.results_generator import ResultsGenerator
@@ -16,6 +17,7 @@ class Renderer:
         'results': ResultsGenerator,
         'details': DetailsGenerator,
         'fastest': FastestGenerator,
+        'pole': PoleGenerator,
         'teams_ranking': TeamsRankingGenerator,
         'pilots_ranking': PilotsRankingGenerator,
     }
