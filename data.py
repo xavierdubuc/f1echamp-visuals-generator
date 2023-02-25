@@ -77,7 +77,9 @@ mercedes = Team(
     secondary_color=(0, 0, 0),
     box_color=(0, 179, 158),
     standing_bg=(0, 161, 156),
-    standing_fg=(0, 0, 0)
+    standing_fg=(0, 0, 0),
+    breaking_bg_color=(0, 210, 190),
+    breaking_line_color=(0, 145, 130)
 )
 mclaren = Team(
     name='McLaren',
@@ -87,7 +89,9 @@ mclaren = Team(
     secondary_color=(40, 40, 40),
     box_color=(224, 146, 12),
     standing_bg=(254, 128, 0),
-    standing_fg=(255, 255, 255)
+    standing_fg=(255, 255, 255),
+    breaking_bg_color=(255, 135, 0),
+    breaking_line_color=(190, 80, 0)
 )
 haas = Team(
     name='Haas',
@@ -97,7 +101,10 @@ haas = Team(
     secondary_color=(211, 211, 211),
     box_color=(211, 211, 211),
     standing_bg=(255, 255, 255),
-    standing_fg=(0, 0, 0)
+    standing_fg=(0, 0, 0),
+    breaking_fg_color=(0,0,0),
+    breaking_bg_color=(250, 250, 250),
+    breaking_line_color=(160, 160, 160)
 )
 alpine = Team(
     name='Alpine',
@@ -107,7 +114,9 @@ alpine = Team(
     secondary_color=(0, 0, 0),
     box_color=(9, 118, 193),
     standing_bg=(14, 28, 44),
-    standing_fg=(255, 255, 255)
+    standing_fg=(255, 255, 255),
+    breaking_bg_color=(20, 30, 40),
+    breaking_line_color=(10, 20, 35)
 )
 ferrari = Team(
     name='Ferrari',
@@ -117,7 +126,9 @@ ferrari = Team(
     secondary_color=(255, 0, 0),
     box_color=(167, 8, 6),
     standing_bg=(255, 0, 0),
-    standing_fg=(0, 0, 0)
+    standing_fg=(0, 0, 0),
+    breaking_bg_color=(255, 0, 0),
+    breaking_line_color=(200, 0, 0)
 )
 williams = Team(
     name='Williams',
@@ -127,7 +138,9 @@ williams = Team(
     secondary_color=(255, 255, 255),
     box_color=(6, 76, 187),
     standing_bg=(4, 30, 66),
-    standing_fg=(255, 255, 255)
+    standing_fg=(255, 255, 255),
+    breaking_bg_color=(6, 170, 230),
+    breaking_line_color=(0, 110, 170)
 )
 alfa_romeo = Team(
     name='AlfaRomeo',
@@ -137,7 +150,9 @@ alfa_romeo = Team(
     secondary_color=(255, 255, 255),
     box_color=(114, 4, 5),
     standing_bg=(153, 0, 0),
-    standing_fg=(255, 255, 255)
+    standing_fg=(255, 255, 255),
+    breaking_bg_color=(153, 0, 0),
+    breaking_line_color=(120, 0, 0)
 )
 aston_martin = Team(
     name='AstonMartin',
@@ -147,7 +162,9 @@ aston_martin = Team(
     secondary_color=(255, 255, 255),
     box_color=(14, 104, 88),
     standing_bg=(2, 87, 79),
-    standing_fg=(255, 255, 255)
+    standing_fg=(255, 255, 255),
+    breaking_bg_color=(2, 87, 79),
+    breaking_line_color=(0, 60, 50)
 )
 alpha_tauri = Team(
     name="AlphaTauri",
@@ -157,7 +174,9 @@ alpha_tauri = Team(
     secondary_color=(200, 200, 200),
     box_color=(40, 64, 90),
     standing_bg=(2, 41, 71),
-    standing_fg=(255, 255, 255)
+    standing_fg=(255, 255, 255),
+    breaking_bg_color=(35, 40, 80),
+    breaking_line_color=(15, 20, 60)
 )
 DEFAULT_TEAM = redbull # FIXME redbull is used as default value, maybe create a fake team instead
 
