@@ -27,6 +27,7 @@ class GeneratorConfig:
     teams: list
     race: Race = None
     description: str = None
+    qualif_ranking: list = None
     ranking: pandas.DataFrame = None
     fastest_lap: FastestLap = None
     ranking_title: str = None

@@ -13,7 +13,7 @@ from helpers.transform import *
 
 class PoleGenerator(AbstractGenerator):
     def _get_pole_pilot(self) -> Pilot:
-        return self.config.race.get_pilot('majforti-07')
+        return self.config.qualif_ranking[0]
 
     def _get_visual_type(self) -> str:
         return 'pole'
@@ -47,13 +47,13 @@ class PoleGenerator(AbstractGenerator):
             return img.copy()
 
     def _get_podium_img(self):
-        color = (255, 255, 255)
         first = self._get_pole_pilot()
-        second = self.config.race.get_pilot('Gros-Nain-Vert')
-        third = self.config.race.get_pilot('DimDim_91270')
+        color = first.team.breaking_fg_color
+        second = self.config.qualif_ranking[1]
+        third = self.config.qualif_ranking[2]
         separator = '  /  '
         full_text = f'1st {first.name}{separator}2nd {second.name}{separator}3rd {third.name}'.upper()
-        Font = FontFactory.regular
+        Font = FontFactory.black
         font = Font(24)
         width, height = text_size(full_text, font)
         img = Image.new('RGBA', (width, height), (0,0,0,0))
@@ -92,7 +92,7 @@ class PoleGenerator(AbstractGenerator):
         paste(img_filter, final, top=final.height//2)
         # POLE TEXT
         pole_txt_img = rotated_text('POLE', (255,255,255,0), FontFactory.black(360),
-                           stroke_width=15, stroke_fill=(255,255,255), angle=15)
+                           stroke_width=15, stroke_fill=pole_pilot.team.breaking_fg_color, angle=15)
         paste(pole_txt_img, final, top=int(0.363 * final.height))
 
         # PODIUM TEXT
