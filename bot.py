@@ -61,7 +61,7 @@ async def rankings(inter,
 @bot.slash_command(name="race", description='Race information')
 async def race(inter:disnake.ApplicationCommandInteraction,
         race_number: str = commands.Param(name="race_number", description='Le numéro de la course'),
-        what: str = commands.Param(name="what", choices=['lineup', 'presentation', 'results', 'details', 'fastest'])
+        what: str = commands.Param(name="what", choices=['lineup', 'presentation', 'results', 'details', 'fastest', 'pole'])
     ):
     _logger.info(f'{inter.user.display_name} called Race(race_number={race_number}, what={what})')
     sheet_name = f'Race {race_number}'
