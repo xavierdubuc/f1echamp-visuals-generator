@@ -409,15 +409,6 @@ class Race:
             pilot = Pilot(name=pilot_name, team=team)
         return pilot
 
-    _default_team = Team(
-        name='RedBull',
-        title='Unknown',
-        subtitle="Team",
-        main_color=(0,0,0),
-        secondary_color=(0, 0, 0),
-        box_color= (0,0,0)
-    )
-
 @dataclass
 class Visual:
     type: str
@@ -514,7 +505,7 @@ class Visual:
         return img
 
     def _get_race_fastest_title(self, width, height):
-        font_size = 60
+        font_size = 60 if len(self.race.round) < 2 else 52
         img = Image.new('RGBA', (width, height), (255, 0, 0, 0))
         font = FontFactory.bold(font_size)
         draw_img = ImageDraw.Draw(img)
