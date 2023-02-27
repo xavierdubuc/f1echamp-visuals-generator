@@ -249,6 +249,7 @@ class Race:
     circuit: Circuit
     pilots: dict
     teams: list
+    type: str
     swappings: dict = None
 
     def get_total_length(self):
@@ -256,6 +257,13 @@ class Race:
 
     def get_title(self):
         return f'RACE {self.round} RESULT'
+
+    def get_max_position_for_fastest_lap(self):
+        if self.type in ('Normale', 'Sprint (2)'):
+            return 14
+        elif self.type.startswith('Double Grid'):
+            return 10
+        return None
 
     def get_title_image(self, width: int, height: int, font, big_font):
         img = Image.new('RGBA', (width, height), (255, 0, 0, 0))

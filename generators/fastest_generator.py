@@ -193,7 +193,8 @@ class FastestGenerator(AbstractGenerator):
         width = max(pilot_img.width, lap_time_img.width, add_point_img.width)
         img = Image.new('RGBA', (width, height), (0, 0, 0, 0))
 
-        if position == 1 and pilot_result.position <= 14:
+        max_position_to_get_fastest_lap = self.config.race.get_max_position_for_fastest_lap()
+        if max_position_to_get_fastest_lap and position == 1 and pilot_result.position <= max_position_to_get_fastest_lap:
             img.paste(add_point_img, (0, 0))
 
         pilot_top = space_between + add_point_img.height if position == 1 else 0

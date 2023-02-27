@@ -115,6 +115,7 @@ class Reader:
             hour=hour.strftime('%H.%M'),
             pilots=pilots,
             teams=teams,
+            type=self.data['B'][20],
             swappings=self._determine_swappings(pilots)
         )
 
