@@ -16,9 +16,25 @@ class Team:
     breaking_fg_color: tuple = (255,255,255)
     breaking_bg_color: tuple = (255,255,255)
     breaking_line_color: tuple = (0,0,0)
+    breaking_use_white_logo: bool = False
+    pole_fg_color:tuple = None
+    pole_bg_color:tuple = None
+    pole_line_color:tuple = None
 
+    def get_pole_colors(self):
+        return {
+            'fg': self.pole_fg_color if self.pole_fg_color else self.breaking_fg_color,
+            'bg': self.pole_bg_color if self.pole_bg_color else self.breaking_bg_color,
+            'line': self.pole_line_color if self.pole_line_color else self.breaking_line_color
+        }
     def get_image(self):
         return f'assets/teams/{self.name}.png'
+
+    def get_breaking_logo(self):
+        return self.get_white_logo() if self.breaking_use_white_logo else self.get_image()
+
+    def get_white_logo(self):
+        return f'assets/teams/white/{self.name}.png'
 
     def get_team_image(self, width, title_font):
         line_separation = 10

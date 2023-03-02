@@ -91,7 +91,8 @@ mclaren = Team(
     standing_bg=(254, 128, 0),
     standing_fg=(255, 255, 255),
     breaking_bg_color=(255, 135, 0),
-    breaking_line_color=(190, 80, 0)
+    breaking_line_color=(190, 80, 0),
+    breaking_use_white_logo=True
 )
 haas = Team(
     name='Haas',
@@ -102,9 +103,13 @@ haas = Team(
     box_color=(211, 211, 211),
     standing_bg=(255, 255, 255),
     standing_fg=(0, 0, 0),
-    breaking_fg_color=(0,0,0),
-    breaking_bg_color=(250, 250, 250),
-    breaking_line_color=(160, 160, 160)
+    breaking_fg_color=(255, 255, 255),
+    breaking_bg_color=(242, 23, 61),
+    breaking_line_color=(178, 0, 23),
+    breaking_use_white_logo=True,
+    pole_fg_color=(0,0,0),
+    pole_bg_color=(250, 250, 250),
+    pole_line_color=(160, 160, 160)
 )
 alpine = Team(
     name='Alpine',
@@ -116,7 +121,8 @@ alpine = Team(
     standing_bg=(14, 28, 44),
     standing_fg=(255, 255, 255),
     breaking_bg_color=(20, 30, 40),
-    breaking_line_color=(10, 20, 35)
+    breaking_line_color=(10, 20, 35),
+    breaking_use_white_logo=True
 )
 ferrari = Team(
     name='Ferrari',
@@ -140,7 +146,8 @@ williams = Team(
     standing_bg=(4, 30, 66),
     standing_fg=(255, 255, 255),
     breaking_bg_color=(6, 170, 230),
-    breaking_line_color=(0, 110, 170)
+    breaking_line_color=(0, 110, 170),
+    breaking_use_white_logo=True
 )
 alfa_romeo = Team(
     name='AlfaRomeo',
@@ -152,7 +159,8 @@ alfa_romeo = Team(
     standing_bg=(153, 0, 0),
     standing_fg=(255, 255, 255),
     breaking_bg_color=(153, 0, 0),
-    breaking_line_color=(120, 0, 0)
+    breaking_line_color=(120, 0, 0),
+    breaking_use_white_logo=True
 )
 aston_martin = Team(
     name='AstonMartin',
@@ -176,7 +184,8 @@ alpha_tauri = Team(
     standing_bg=(2, 41, 71),
     standing_fg=(255, 255, 255),
     breaking_bg_color=(35, 40, 80),
-    breaking_line_color=(15, 20, 60)
+    breaking_line_color=(15, 20, 60),
+    breaking_use_white_logo=True
 )
 DEFAULT_TEAM = redbull # FIXME redbull is used as default value, maybe create a fake team instead
 
