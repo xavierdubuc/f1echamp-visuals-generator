@@ -24,7 +24,7 @@ class PoleGenerator(AbstractGenerator):
     def _generate_basic_image(self) -> PngImageFile:
         pole_pilot = self._get_pole_pilot()
         with Image.open('assets/pole/bg.png') as img:
-            base = Image.new('RGB', (img.width, img.height), color=pole_pilot.team.breaking_bg_color)
+            base = Image.new('RGB', (img.width, img.height), color=pole_pilot.team.get_pole_colors()['bg'])
         return base
 
     def _get_pilot_image(self, pilot:Pilot, width, height):
@@ -48,7 +48,7 @@ class PoleGenerator(AbstractGenerator):
 
     def _get_podium_img(self):
         first = self._get_pole_pilot()
-        color = first.team.breaking_fg_color
+        color = first.team.get_pole_colors()['fg']
         second = self.config.qualif_ranking[1]
         third = self.config.qualif_ranking[2]
         separator = '  /  '
@@ -76,7 +76,8 @@ class PoleGenerator(AbstractGenerator):
 
     def _add_content(self, final: PngImageFile):
         pole_pilot = self._get_pole_pilot()
-        draw_lines(final, pole_pilot.team.breaking_line_color, space_between_lines=10, line_width=2)
+        colors = pole_pilot.team.get_pole_colors()
+        draw_lines(final, colors['line'], space_between_lines=10, line_width=2)
         repeat_text(final, (0,0,0, 177), pole_pilot.name.upper(), Font=FontFactory.polebg, font_size=200)
 
         with Visual.get_fbrt_logo(True) as logo:
@@ -87,12 +88,12 @@ class PoleGenerator(AbstractGenerator):
 
 
         # GRADIENT
-        img_filter = Image.new('RGB', (final.width, final.height//2), pole_pilot.team.breaking_line_color)
+        img_filter = Image.new('RGB', (final.width, final.height//2), colors['line'])
         gradient(img_filter, GradientDirection.DOWN_TO_UP)
         paste(img_filter, final, top=final.height//2)
         # POLE TEXT
         pole_txt_img = rotated_text('POLE', (255,255,255,0), FontFactory.black(360),
-                           stroke_width=15, stroke_fill=pole_pilot.team.breaking_fg_color, angle=15)
+                           stroke_width=15, stroke_fill=colors['fg'], angle=15)
         paste(pole_txt_img, final, top=int(0.363 * final.height))
 
         # PODIUM TEXT
