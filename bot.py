@@ -86,14 +86,15 @@ async def breaking(inter,
         secondary_txt: str=commands.Param(name='secondary_txt', description='Texte secondaire de la breaking news'),
         team: str=commands.Param(name='team', default=None, choices=TEAMS, description="L'équipe concernée par la breaking news"),
         background: str=commands.Param(name='background', default='255,255,255', description="La couleur de fond à utiliser (au format R,G,B ou R,G,B,A), ignoré si le paramètre team est présent"),
-        foreground: str=commands.Param(name='foreground', default='0,0,0', description="La couleur du texte (au format R,G,B ou R,G,B,A), ignoré si le paramètre team est présent")
+        foreground: str=commands.Param(name='foreground', default='0,0,0', description="La couleur du texte (au format R,G,B ou R,G,B,A), ignoré si le paramètre team est présent"),
+        padding_top: int=commands.Param(name='padding_top', default=None, description="L'espace en pixel à partir duquel l'image est collée en partant du haut. 0 pour tout en haut.")
     ):
-    _logger.info(f'{inter.user.display_name} called Breaking(main_txt={main_txt}, secondary_txt={secondary_txt}, team={team}, bg={background}, fg={foreground})')
+    _logger.info(f'{inter.user.display_name} called Breaking(main_txt={main_txt}, secondary_txt={secondary_txt}, team={team}, bg={background}, fg={foreground}, pt={padding_top})')
     await inter.response.defer()
 
     _logger.info('Rendering image...')
     input = (await img.to_file()).fp
-    renderer = BreakingRenderer(main_txt, secondary_txt, team, background, foreground, output='tmp.png', input=input)
+    renderer = BreakingRenderer(main_txt, secondary_txt, team, background, foreground, output='tmp.png', input=input, padding_top=padding_top)
     output_filepath = renderer.render()
 
     _logger.info('Sending image...')
