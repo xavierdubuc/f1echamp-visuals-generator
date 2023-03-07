@@ -47,7 +47,6 @@ async def on_message(msg: disnake.Message):
 async def on_raw_reaction_add(payload):
     if payload.emoji.name == '❌':
         channel = await bot.fetch_channel(payload.channel_id)
-        print(channel)
         message = await channel.fetch_message(payload.message_id)
         if message.author == bot.user:
             await message.delete()

@@ -8,6 +8,7 @@ from generators.lineups_generator import LineupGenerator
 from generators.presentation_generator import PresentationGenerator
 from generators.teams_ranking_generator import TeamsRankingGenerator
 from generators.pilots_ranking_generator import PilotsRankingGenerator
+from generators.numbers_generator import NumbersGenerator
 
 
 class Renderer:
@@ -20,6 +21,7 @@ class Renderer:
         'pole': PoleGenerator,
         'teams_ranking': TeamsRankingGenerator,
         'pilots_ranking': PilotsRankingGenerator,
+        'numbers': NumbersGenerator,
     }
 
     @classmethod

@@ -54,11 +54,11 @@ def text_on_gradient(txt: str, text_color, font:ImageFont.FreeTypeFont, padding=
     img.alpha_composite(txt_img, (padding, padding))
     return img
 
-def text(text:str, text_color, font:ImageFont.FreeTypeFont, stroke_width=0, stroke_fill=None, **kwargs):
+def text(text:str, text_color, font:ImageFont.FreeTypeFont, stroke_width=0, stroke_fill=None, security_padding=0, **kwargs):
     width, height = text_size(text, font, stroke_width=stroke_width, **kwargs)
-    img = Image.new('RGBA', (width, height), (0, 0, 0, 0))
+    img = Image.new('RGBA', (width+security_padding, height), (0, 0, 0, 0))
     draw = ImageDraw.Draw(img)
-    draw.text((0, 0), text, text_color, font, stroke_width=stroke_width, stroke_fill=stroke_fill, **kwargs)
+    draw.text((security_padding, 0), text, text_color, font, stroke_width=stroke_width, stroke_fill=stroke_fill, **kwargs)
     return img
 
 def rotated_text(txt_str:str, text_color, font:ImageFont.FreeTypeFont, stroke_width=0, stroke_fill=None, angle=15, **kwargs):
@@ -106,6 +106,23 @@ def draw_lines(img: PngImageFile, color:tuple, space_between_lines=7, line_width
     max_dim = img.width if img.width > img.height else img.height
     for i in range(offset+1, max_dim, space_between_lines):
         draw.line(((i, img.height), (img.width, diff+i)), fill=color, width=line_width)
+
+def draw_lines_all(img: PngImageFile, color:tuple, space_between_lines=7, line_width=2):
+    draw = ImageDraw.Draw(img)
+    i = img.width
+    j = img.height
+    while j > 0 or i > 0:
+        line_coordinates = (0 - (img.width - i), j), (i, 0 - (img.height - j))
+        draw.line(line_coordinates, fill=color, width=line_width)
+        j -= space_between_lines
+        i -= space_between_lines
+
+    i = space_between_lines
+    j = space_between_lines
+    while i < img.width or j < img.height:
+        draw.line(((i, (img.height+j)), ((img.width+i), j)), fill=color, width=line_width)
+        i += space_between_lines
+        j += space_between_lines
 
 def repeat_text(base: PngImageFile, color:tuple, txt: str, Font=FontFactory.regular, font_size=120, angle=15):
     img = Image.new('RGBA', (int(1.5*base.width), int(1.5*base.height)), (0,0,0,0))
