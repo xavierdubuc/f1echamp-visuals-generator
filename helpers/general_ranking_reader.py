@@ -5,9 +5,10 @@ from helpers.reader import Reader
 
 class GeneralRankingReader(Reader):
 
-    def __init__(self, type: str, filepath: str = './data.xlsx', out_filepath: str = None, season: int = 4):
+    def __init__(self, type: str, filepath: str = './data.xlsx', out_filepath: str = None, season: int = 4, metric: str = 'Total'):
         super().__init__(type, filepath, None, out_filepath)
         self.season = season
+        self.metric = metric
         if type == GeneratorType.PilotsRanking.value:
             self.sheet_name = 'Pilots Ranking'
         if type == GeneratorType.TeamsRanking.value:
@@ -21,13 +22,17 @@ class GeneralRankingReader(Reader):
             r = row.dropna()
             max_size = max_size if max_size > r.size else r.size
         if self.type == GeneratorType.PilotsRanking.value:
-            ranking_title = f'season {self.season} pilots standings'.upper()
+            if self.metric == 'Total':
+                ranking_title = f'season {self.season} pilots standings'.upper()
+            else:
+                ranking_title = f'season {self.season} pilots points/race'.upper()
         elif self.type == GeneratorType.TeamsRanking.value:
             ranking_title = f'season {self.season} teams standings'.upper()
         ranking_subtitle = f'after {self.data.columns[max_size-1]}'.upper()
             
         config = GeneratorConfig(
             type=self.type,
+            metric=self.metric,
             output=self.out_filepath or f'./{self.type}.png',
             pilots=pilots,
             teams=teams,
@@ -38,7 +43,7 @@ class GeneralRankingReader(Reader):
         return config
 
     def _get_data_sheet_from_gsheet(self, spreadsheet):
-        range_str = f"'{self.sheet_name}'!A1:P50"
+        range_str = f"'{self.sheet_name}'!A1:S50"
         vals = spreadsheet.values().get(spreadsheetId=self.spreadsheet_id, range=range_str).execute()['values']
         columns = vals[0] 
         values = [
@@ -49,4 +54,4 @@ class GeneralRankingReader(Reader):
 
     def _get_general_ranking(self):
         A = 'Ecurie' if self.type == GeneratorType.TeamsRanking.value else 'Pilot'
-        return self.data[[A,'Total']].where(lambda x: x != '', pandas.NA).dropna()
+        return self.data[[A,'Total', 'Points par course']].where(lambda x: x != '', pandas.NA).dropna()

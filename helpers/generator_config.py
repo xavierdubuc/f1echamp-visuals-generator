@@ -32,4 +32,5 @@ class GeneratorConfig:
     fastest_lap: FastestLap = None
     ranking_title: str = None
     ranking_subtitle: str = None
+    metric: str = 'Total'
 

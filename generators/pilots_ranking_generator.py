@@ -89,13 +89,20 @@ class PilotsRankingGenerator(AbstractGenerator):
         current_top = title_height+padding_top
         current_left = padding_side
         column_width = ((width - padding_between_cols)// 2)
-        for i, row in self.config.ranking.iterrows():
+        if self.config.metric == 'Total':
+            data_type = int
+        else:
+            data_type = float
+        self.config.ranking[self.config.metric] = self.config.ranking[self.config.metric].str.replace(',','.').astype(data_type)
+        i = 0
+        for _, row in self.config.ranking.sort_values(by=self.config.metric, ascending=False).iterrows():
             if i % PILOTS_BY_COLUMN == 0 and i > 0:
                 current_top = title_height+padding_top
                 current_left += column_width + padding_between_cols
-            pilot_ranking_img = self._get_pilot_ranking_img(column_width, row_height, row['Pilot'], row['Total'], i+1)
+            pilot_ranking_img = self._get_pilot_ranking_img(column_width, row_height, row['Pilot'], row[self.config.metric], i+1)
             _, _, _, r_bottom = paste(pilot_ranking_img, base_img, left=current_left, top=current_top)
             current_top = r_bottom + padding_between_rows
+            i += 1
 
     def _get_pilot_ranking_img(self, width:int, height:int, pilot_name, points, pos):
         img = Image.new('RGBA', (width, height), (0,0,0,0))
@@ -126,7 +133,7 @@ class PilotsRankingGenerator(AbstractGenerator):
         paste(team_txt, img, team_name_left+225)
 
         # POINTS
-        points_txt = self._get_points_img(points_width, height, points)
+        points_txt = self._get_points_img(points_width, height, str(points))
         paste(points_txt, img, left=team_name_right + padding_between)
 
         return img

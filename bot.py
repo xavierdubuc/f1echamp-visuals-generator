@@ -54,14 +54,24 @@ async def on_raw_reaction_add(payload):
 
 @bot.slash_command(name="rankings", description='Rankings')
 async def rankings(inter,
-                   what: str = commands.Param(name="what", choices=[
-                                              "teams", "pilots"], description="Teams pour le classement des équipes, pilots pour les pilotes")
+                   what: str = commands.Param(
+                       name="what",
+                       choices=["teams", "pilots"],
+                       description="Teams pour le classement des équipes, pilots pour les pilotes"
+                   ),
+                   metric: str = commands.Param(
+                       name="metric",
+                       choices=['Points', 'Points par course'],
+                       description="La métrique à utiliser pour les points et pour trier le classement",
+                       default='Points'
+                   )
                    ):
-    _logger.info(f'{inter.user.display_name} called Rankings(what={what})')
+    _logger.info(f'{inter.user.display_name} called Rankings(what={what}, metric={metric})')
     await inter.response.defer()
 
     _logger.info('Reading google sheet')
-    config = GeneralRankingReader(f'{what}_ranking', 'gsheet', 'tmp.png', 4).read()
+    tech_metric = 'Total' if metric == 'Points' else metric
+    config = GeneralRankingReader(f'{what}_ranking', 'gsheet', 'tmp.png', 4, tech_metric).read()
     _logger.info('Rendering image...')
     output_filepath = Renderer.render(config)
     _logger.info('Sending image...')
