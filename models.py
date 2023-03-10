@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+import os
 from PIL import Image, ImageDraw
 from font_factory import FontFactory
 from helpers.transform import GradientDirection, gradient, resize, text_size, paste
@@ -166,6 +167,21 @@ class Pilot:
     team: Team = None
     number: str = 'Re'
     title: str = None
+
+    def get_celebrating_image(self):
+        possible_img_paths = [
+            f'assets/pole/celebrating/{self.name}.png',
+            f'assets/pole/celebrating/{self.team.name}_default.png',
+            f'assets/pilots/1080x1080/{self.name}.png',
+            f'assets/pilots/real_no_bg/{self.name}.png',
+            f'assets/pilots/real/{self.name}.png',
+            f'assets/pilots/1080x1080/{self.team.name}_default.png',
+            f'assets/team_pilots/{self.team.name}.png'
+        ]
+        for img_path in possible_img_paths:
+            if os.path.exists(img_path):
+                return img_path
+        return None
 
     def get_team_image(self):
         return self.team.get_image() if self.team else ''

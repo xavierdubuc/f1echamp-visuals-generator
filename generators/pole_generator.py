@@ -29,19 +29,7 @@ class PoleGenerator(AbstractGenerator):
 
     def _get_pilot_image(self, pilot:Pilot, width, height):
         img = Image.new('RGBA', (width, height), (0,0,0,0))
-        possible_img_paths = [
-            f'assets/pole/celebrating/{pilot.name}.png',
-            f'assets/pole/celebrating/{pilot.team.name}_default.png',
-            f'assets/pilots/1080x1080/{pilot.name}.png',
-            f'assets/pilots/real_no_bg/{pilot.name}.png',
-            f'assets/pilots/real/{pilot.name}.png',
-            f'assets/pilots/1080x1080/{pilot.team.name}_default.png',
-            f'assets/team_pilots/{pilot.team.name}.png'
-        ]
-        for img_path in possible_img_paths:
-            if os.path.exists(img_path):
-                break
-
+        img_path = pilot.get_celebrating_image()
         with Image.open(img_path) as team_pilot_img:
             img = resize(team_pilot_img, width, height)
             return img.copy()
