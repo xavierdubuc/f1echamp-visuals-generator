@@ -187,7 +187,26 @@ alpha_tauri = Team(
     breaking_line_color=(15, 20, 60),
     breaking_use_white_logo=True
 )
-DEFAULT_TEAM = redbull # FIXME redbull is used as default value, maybe create a fake team instead
+DEFAULT_TEAM = Team(
+    name='Default',
+    title='Default',
+    subtitle='Default',
+    main_color=(0, 0, 0),
+    secondary_color=(255, 0, 0),
+    box_color=(0, 0, 186),
+    standing_bg= (128,128,128),
+    standing_fg = (255, 255, 255)
+)
+RESERVIST_TEAM = Team(
+    name='Reservist',
+    title='Reservist',
+    subtitle='Reservist',
+    main_color=(0, 0, 0),
+    secondary_color=(255, 0, 0),
+    box_color=(0, 0, 186),
+    standing_bg= (128,128,128),
+    standing_fg = (50,50,50)
+)
 
 teams_idx = {
     'RedBull': redbull,

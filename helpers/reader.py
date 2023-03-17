@@ -6,7 +6,12 @@ import pandas
 from helpers.generator_config import FastestLap, GeneratorConfig
 from models import Pilot, Race
 from data import circuits, teams_idx
-from data import teams as DEFAULT_TEAMS_LIST, pilots as DEFAULT_PILOTS_LIST
+from data import (
+    teams as DEFAULT_TEAMS_LIST,
+    pilots as DEFAULT_PILOTS_LIST,
+    DEFAULT_TEAM,
+    RESERVIST_TEAM
+)
 
 
 _logger = logging.getLogger(__name__)
@@ -19,9 +24,9 @@ class InputData:
 
 class Reader:
     VALUES_SHEET_NAME = '_values'
-    DEFAULT_SPREADSHEET_ID = '1RLRw4xGIHeGxPqqqndXZPBjcrv1H3Z5xn3l3p8Mjb_A'
+    DEFAULT_SPREADSHEET_ID = '1JJw3YnVUXYCyjhH4J5MIbVg5OtjTIDLptx0pF2M9KV4'
 
-    def __init__(self, type: str, filepath: str = './data.xlsx', sheet_name: str = 'Race 1', out_filepath: str = None):
+    def __init__(self, type: str, filepath: str = './data.xlsx', sheet_name: str = None, out_filepath: str = None):
         self.filepath = filepath
         if self.filepath.startswith('gsheet'):
             parts = self.filepath.split(':')
@@ -34,7 +39,7 @@ class Reader:
 
     def read(self):
         pilots, teams = self._read()
-        race = self._get_race(pilots, teams)
+        race = self._get_race(pilots, teams) if self.type != 'numbers' else None
         config = GeneratorConfig(
             type=self.type,
             output=self.out_filepath or f'./{self.type}.png',
@@ -44,13 +49,13 @@ class Reader:
         )
         if self.type == 'presentation':
             config.description = self.data['A'][6]
-        if self.type == 'pole':
+        if self.type in ('pole', 'grid'):
             config.qualif_ranking = [
                 race.get_pilot(self.data['G'][29]),
                 race.get_pilot(self.data['G'][30]),
                 race.get_pilot(self.data['G'][31]),
             ]
-        if self.type in ('results', 'details', 'fastest'):
+        if self.type in ('results', 'details', 'fastest', 'grid'):
             config.ranking = self._get_ranking()
         if self.type in ('results', 'details'):
             config.fastest_lap = self._get_fastest_lap(race)
@@ -68,8 +73,8 @@ class Reader:
 
     def _build_pilots_list(self, values: pandas.DataFrame):
         return {
-            row['Pilotes']: Pilot(name=row['Pilotes'], team=teams_idx[row['Ecurie']], number=str(int(row['Numéro'])))
-            for _, row in values.dropna().iterrows()
+            row['Pilotes']: Pilot(name=row['Pilotes'], team=teams_idx.get(row['Ecurie'], RESERVIST_TEAM if row['Ecurie'] == 'R' else DEFAULT_TEAM), number=str(int(row['Numéro'])))
+            for _, row in values[values['Pilotes'].notnull()].iterrows()
         }
 
     def _build_teams_list(self, values: pandas.DataFrame):
@@ -163,9 +168,12 @@ class Reader:
         sheet_names = self._get_sheet_names_from_gsheet(spreadsheet)
         sheet_values = self._get_values_sheet_from_gsheet(spreadsheet)
 
-        if self.sheet_name not in sheet_names:
-            raise Exception(f'{self.sheet_name} is not a valid sheet name, please select a sheet within possible values : {sheet_names}')
-        sheet_data = self._get_data_sheet_from_gsheet(spreadsheet)
+        if not self.sheet_name:
+            sheet_data = None
+        else:
+            if self.sheet_name not in sheet_names:
+                raise Exception(f'{self.sheet_name} is not a valid sheet name, please select a sheet within possible values : {sheet_names}')
+            sheet_data = self._get_data_sheet_from_gsheet(spreadsheet)
 
         _logger.info(f'Data have been read from google spreadsheet "{self.spreadsheet_id}"')
         return InputData(

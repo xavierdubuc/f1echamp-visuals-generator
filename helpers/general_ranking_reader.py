@@ -54,4 +54,5 @@ class GeneralRankingReader(Reader):
 
     def _get_general_ranking(self):
         A = 'Ecurie' if self.type == GeneratorType.TeamsRanking.value else 'Pilot'
-        return self.data[[A,'Total', 'Points par course']].where(lambda x: x != '', pandas.NA).dropna()
+        columns = [A,'Total'] if self.type == GeneratorType.TeamsRanking.value else [A,'Total', 'Points par course']
+        return self.data[columns].where(lambda x: x != '', pandas.NA).dropna()
