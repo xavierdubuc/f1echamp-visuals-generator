@@ -49,7 +49,7 @@ class Renderer:
 
         line_color = self.team.breaking_line_color if self.team else (159, 159, 159)
         final = Image.new('RGB', (final.width, final.height), self.bg_color)
-        draw_lines(final, line_color, space_between_lines=10, line_width=2)
+        draw_lines_all(final, line_color, space_between_lines=4, line_width=2)
         top_breaking_height = 155
         bottom_message_height = 215
         space_top_middle = 30
