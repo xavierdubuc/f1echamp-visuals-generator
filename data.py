@@ -3,33 +3,33 @@ from models import *
 
 # --- CIRCUITS
 
-bahrein = Circuit(id='bahrein', name='Bahreïn', lap_length=5.412, best_lap="1' 31'' 447")
-saudiarabia = Circuit(id='saudiarabia', name='Arabie Saoudite', lap_length=6.174, best_lap="1' 30'' 734")
-australia = Circuit(id='australia', name='Australie', lap_length=5.278, best_lap="N/A")
-imola = Circuit(id='imola', name='Imola', lap_length=4.909, best_lap="1' 15'' 484")
-miami = Circuit(id='miami', name='Miami', lap_length=5.412, best_lap="1' 31'' 361")
-spain = Circuit(id='spain', name='Espagne', lap_length=4.675, best_lap="1' 18'' 149")
-monaco = Circuit(id='monaco', name='Monaco', lap_length=3.337, best_lap="1' 12'' 909")
-azerbaidjan = Circuit(id='azerbaidjan', name='Azerbaïdjan', lap_length=6.003, best_lap="1' 43'' 009")
-canada = Circuit(id='canada', name='Canada', lap_length=4.361, best_lap="1' 13'' 078")
-gb = Circuit(id='gb', name='Grande-Bretagne', lap_length=5.891, best_lap="1' 27'' 097")
-austria = Circuit(id='austria', name='Autriche', lap_length=4.318, best_lap="1' 05'' 619")
-france = Circuit(id='france', name='France', lap_length=5.842, best_lap="1' 32'' 740")
-hungary = Circuit(id='hungary', name='Hongrie', lap_length=4.381, best_lap="1' 16'' 627")
-belgium = Circuit(id='belgium', name='Belgique', lap_length=7.004, best_lap="1' 41'' 252")
-netherlands = Circuit(id='netherlands', name='Pays-Bas', lap_length=4.259, best_lap="1' 11'' 097")
-italy = Circuit(id='italy', name="Italie", lap_length=5.793, best_lap="1' 21'' 046")
-singapore = Circuit(id='singapore', name='Singapour', lap_length=5.063, best_lap="1' 41'' 905")
-japan = Circuit(id='japan', name='Japon', lap_length=5.807, best_lap="1' 30'' 983")
-austin = Circuit(id='austin', name='Etats-Unis', lap_length=5.513, best_lap="1' 36'' 169")
-mexico = Circuit(id='mexico', name='Mexique', lap_length=4.304, best_lap="1' 17'' 774")
-brazil = Circuit(id='brazil', name='Brésil', lap_length=4.309, best_lap="1' 10'' 540")
-abudhabi = Circuit(id='abudhabi', name='Abu Dhabi', lap_length=5.281, best_lap="1' 26'' 103")
-portugal = Circuit(id='portugal', name='Portugal', lap_length=4.653, best_lap="1' 18'' 750")
-china = Circuit(id='china', name='Chine', lap_length=5.451, best_lap="1' 32'' 238")
+bahrein = Circuit(id='bahrein', name='Bahreïn', city='Sakhir', lap_length=5.412, best_lap="1' 31'' 447")
+saudiarabia = Circuit(id='saudiarabia', name='Arabie Saoudite', city='Jeddah', lap_length=6.174, best_lap="1' 30'' 734")
+australia = Circuit(id='australia', name='Australie', city='Melbourne', lap_length=5.278, best_lap="N/A")
+imola = Circuit(id='imola', name='Emilie Romagne', city='Imola', lap_length=4.909, best_lap="1' 15'' 484")
+miami = Circuit(id='miami', name='Miami', city='Miami', lap_length=5.412, best_lap="1' 31'' 361")
+spain = Circuit(id='spain', name='Espagne', city='Barcelona', lap_length=4.675, best_lap="1' 18'' 149")
+monaco = Circuit(id='monaco', name='Monaco', city='Monaco', lap_length=3.337, best_lap="1' 12'' 909")
+azerbaidjan = Circuit(id='azerbaidjan', name='Azerbaïdjan', city='Baku', lap_length=6.003, best_lap="1' 43'' 009")
+canada = Circuit(id='canada', name='Canada', city='Montréal', lap_length=4.361, best_lap="1' 13'' 078")
+gb = Circuit(id='gb', name='Grande-Bretagne', city='Silverstone', lap_length=5.891, best_lap="1' 27'' 097")
+austria = Circuit(id='austria', name='Autriche', city='Spielberg', lap_length=4.318, best_lap="1' 05'' 619")
+france = Circuit(id='france', name='France', city='Paul Ricard', lap_length=5.842, best_lap="1' 32'' 740")
+hungary = Circuit(id='hungary', name='Hongrie', city='Budapest', lap_length=4.381, best_lap="1' 16'' 627")
+belgium = Circuit(id='belgium', name='Belgique', city='Spa-Francorchamps', lap_length=7.004, best_lap="1' 41'' 252")
+netherlands = Circuit(id='netherlands', name='Pays-Bas', city='Zandvoort', lap_length=4.259, best_lap="1' 11'' 097")
+italy = Circuit(id='italy', name="Italie", city='Monza', lap_length=5.793, best_lap="1' 21'' 046")
+singapore = Circuit(id='singapore', name='Singapour', city='Singapour', lap_length=5.063, best_lap="1' 41'' 905")
+japan = Circuit(id='japan', name='Japon', city='Suzuka', lap_length=5.807, best_lap="1' 30'' 983")
+austin = Circuit(id='austin', name='Etats-Unis', city='Austin', lap_length=5.513, best_lap="1' 36'' 169")
+mexico = Circuit(id='mexico', name='Mexique', city='Mexico City', lap_length=4.304, best_lap="1' 17'' 774")
+brazil = Circuit(id='brazil', name='Brésil', city='Sao Paulo', lap_length=4.309, best_lap="1' 10'' 540")
+abudhabi = Circuit(id='abudhabi', name='Abu Dhabi', city='Yas Marina', lap_length=5.281, best_lap="1' 26'' 103")
+portugal = Circuit(id='portugal', name='Portugal', city='Portimao', lap_length=4.653, best_lap="1' 18'' 750")
+china = Circuit(id='china', name='Chine', city='Shanghai', lap_length=5.451, best_lap="1' 32'' 238")
 
 circuits = {
-    'Bahreïn': bahrein,
+    'Bahrein': bahrein,
     'Arabie Saoudite': saudiarabia,
     'Australie': australia,
     'Imola': imola,
@@ -193,7 +193,7 @@ DEFAULT_TEAM = Team(
     subtitle='Default',
     main_color=(0, 0, 0),
     secondary_color=(255, 0, 0),
-    box_color=(0, 0, 186),
+    box_color=(186, 0, 0),
     standing_bg= (128,128,128),
     standing_fg = (255, 255, 255)
 )
@@ -202,7 +202,7 @@ RESERVIST_TEAM = Team(
     title='Reservist',
     subtitle='Reservist',
     main_color=(0, 0, 0),
-    secondary_color=(255, 0, 0),
+    secondary_color=(200, 200, 200),
     box_color=(0, 0, 186),
     standing_bg= (128,128,128),
     standing_fg = (50,50,50)

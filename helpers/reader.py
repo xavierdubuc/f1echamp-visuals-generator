@@ -39,7 +39,7 @@ class Reader:
 
     def read(self):
         pilots, teams = self._read()
-        race = self._get_race(pilots, teams) if self.type != 'numbers' else None
+        race = self._get_race(pilots, teams) if self.type not in ('numbers', 'season_lineup') else None
         config = GeneratorConfig(
             type=self.type,
             output=self.out_filepath or f'./{self.type}.png',
@@ -73,7 +73,7 @@ class Reader:
 
     def _build_pilots_list(self, values: pandas.DataFrame):
         return {
-            row['Pilotes']: Pilot(name=row['Pilotes'], team=teams_idx.get(row['Ecurie'], RESERVIST_TEAM if row['Ecurie'] == 'R' else DEFAULT_TEAM), number=str(int(row['Numéro'])))
+            row['Pilotes']: Pilot(name=row['Pilotes'], team=teams_idx.get(row['Ecurie'], RESERVIST_TEAM if row['Ecurie'] == 'R' else DEFAULT_TEAM), number=row['Numéro'])
             for _, row in values[values['Pilotes'].notnull()].iterrows()
         }
 
@@ -152,7 +152,7 @@ class Reader:
         sheet_names = self._get_sheet_names_from_gsheet(spreadsheet)
 
         if self.VALUES_SHEET_NAME in sheet_names:
-            vals = spreadsheet.values().get(spreadsheetId=self.spreadsheet_id, range='_values!A1:G25').execute()
+            vals = spreadsheet.values().get(spreadsheetId=self.spreadsheet_id, range='_values!A1:G30').execute()
             sheet_values = pandas.DataFrame(vals['values'][1:], columns=vals['values'][0])
         else:
             sheet_values = None

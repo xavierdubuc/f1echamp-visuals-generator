@@ -9,6 +9,8 @@ from generators.presentation_generator import PresentationGenerator
 from generators.teams_ranking_generator import TeamsRankingGenerator
 from generators.pilots_ranking_generator import PilotsRankingGenerator
 from generators.numbers_generator import NumbersGenerator
+from generators.calendar_generator import CalendarGenerator
+from generators.season_lineup_generator import SeasonLineupGenerator
 
 
 class Renderer:
@@ -22,6 +24,8 @@ class Renderer:
         'teams_ranking': TeamsRankingGenerator,
         'pilots_ranking': PilotsRankingGenerator,
         'numbers': NumbersGenerator,
+        'season_lineup': SeasonLineupGenerator,
+        'calendar': CalendarGenerator
     }
 
     @classmethod

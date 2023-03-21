@@ -251,6 +251,10 @@ class Circuit:
     name: str
     lap_length: float
     best_lap: str
+    city: str = None
+
+    def get_flag(self):
+        return Image.open(f'assets/circuits/flags/{self.id}.png')
 
     def get_title_image(self, height:int, font):
         tmp = Image.new('RGBA', (5000, height), (255, 0, 0, 0))
