@@ -42,7 +42,7 @@ class Reader:
         race = self._get_race(pilots, teams) if self.type not in ('numbers', 'season_lineup') else None
         config = GeneratorConfig(
             type=self.type,
-            output=self.out_filepath or f'./{self.type}.png',
+            output=self.out_filepath or f'./output/{self.type}.png',
             pilots=pilots,
             teams=teams,
             race=race

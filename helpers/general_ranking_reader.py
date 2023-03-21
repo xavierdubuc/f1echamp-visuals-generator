@@ -33,7 +33,7 @@ class GeneralRankingReader(Reader):
         config = GeneratorConfig(
             type=self.type,
             metric=self.metric,
-            output=self.out_filepath or f'./{self.type}.png',
+            output=self.out_filepath or f'./output/{self.type}.png',
             pilots=pilots,
             teams=teams,
             ranking=ranking,

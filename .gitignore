@@ -1,4 +1,5 @@
 *.xlsx
+output/*
 *.png
 !assets/**/*.png
 **/__pycache__
