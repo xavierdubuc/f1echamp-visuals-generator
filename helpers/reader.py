@@ -160,7 +160,8 @@ class Reader:
 
     def _get_data_sheet_from_gsheet(self, spreadsheet):
         race_vals = spreadsheet.values().get(spreadsheetId=self.spreadsheet_id, range=f"'{self.sheet_name}'!A1:L33").execute()['values']
-        columns = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L'][:len(race_vals[1])]
+        max_len = max([len(race_val) for race_val in race_vals[1:]])
+        columns = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L'][:max_len]
         return pandas.DataFrame(race_vals[1:], columns=columns)
 
     def _get_data_from_gsheet(self) -> InputData:
