@@ -5,7 +5,7 @@ from helpers.reader import Reader
 
 class GeneralRankingReader(Reader):
 
-    def __init__(self, type: str, filepath: str = './data.xlsx', out_filepath: str = None, season: int = 4, metric: str = 'Total'):
+    def __init__(self, type: str, filepath: str = './data.xlsx', out_filepath: str = None, season: int = 5, metric: str = 'Total'):
         super().__init__(type, filepath, None, out_filepath)
         self.season = season
         self.metric = metric
@@ -18,6 +18,9 @@ class GeneralRankingReader(Reader):
         pilots, teams = self._read()
         ranking = self._get_general_ranking()
         max_size = -1
+        self.data = self.data.where(self.data != 'abs', pandas.NA)
+        if self.type == GeneratorType.TeamsRanking.value:
+            self.data = self.data.where(self.data != '0', pandas.NA)
         for i, row in self.data.iterrows():
             r = row.dropna()
             max_size = max_size if max_size > r.size else r.size

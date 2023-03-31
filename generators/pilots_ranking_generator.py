@@ -16,7 +16,7 @@ RESERVIST_TEAM = Team(
     standing_fg = (220, 220, 220)
 )
 
-PILOTS_BY_COLUMN = 15
+PILOTS_BY_COLUMN = 13
 
 class PilotsRankingGenerator(AbstractGenerator):
     def _get_visual_type(self) -> str:

@@ -10,6 +10,8 @@ from helpers.renderer import Renderer
 from breaking import Renderer as BreakingRenderer
 
 from data import teams_idx
+from config import discord_bot_token
+
 
 logging.basicConfig(
     level=logging.INFO,
@@ -34,12 +36,13 @@ FBRT_BOT_CHAN_ID = 1074632856443289610
 async def on_ready():
     msg = f'Mesdames messieurs {"bonjour" if 5 < datetime.now().hour < 17 else "bonsoir"} !'
     await bot.get_guild(FBRT_GUILD_ID).get_channel(FBRT_BOT_CHAN_ID).send(msg)
-    print('Connected !')
+    _logger.info('Connected !')
 
 
 @bot.event
 async def on_message(msg: disnake.Message):
     if bot.user.mentioned_in(msg) and not msg.mention_everyone and msg.type != disnake.MessageType.reply:
+        # TODO calepino
         await msg.channel.send("Vous m'avez appelé ? Ne vous en faites Gaëtano est là ! J'vous ai déjà parlé de mon taximan brésilien ?")
 
 
@@ -71,7 +74,7 @@ async def rankings(inter,
 
     _logger.info('Reading google sheet')
     tech_metric = 'Total' if metric == 'Points' else metric
-    config = GeneralRankingReader(f'{what}_ranking', 'gsheet', 'tmp.png', 4, tech_metric).read()
+    config = GeneralRankingReader(f'{what}_ranking', 'gsheet', 'tmp.png', 5, tech_metric).read()
     _logger.info('Rendering image...')
     output_filepath = Renderer.render(config)
     _logger.info('Sending image...')
@@ -151,4 +154,4 @@ async def on_slash_command_error(inter: disnake.ApplicationCommandInteraction, e
 bot.on_slash_command_error = on_slash_command_error
 
 _logger.info('Starting...')
-bot.run('MTA3NDM3NzU3NTgwNTIyNzE5OQ.GIyHdp.oQM7BPINYN4oP7LWfmE0PDhFLYFSb_8rlyGd_4')
+bot.run(discord_bot_token)
