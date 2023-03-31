@@ -1,7 +1,9 @@
 *.xlsx
 output/*
 *.png
+*.mp4
 !assets/**/*.png
+!assets/**/*.mp4
 **/__pycache__
 *.pyc
 config.py

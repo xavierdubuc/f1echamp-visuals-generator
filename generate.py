@@ -1,6 +1,7 @@
 from helpers.reader import Reader
 from helpers.calendar_reader import CalendarReader
 from helpers.general_ranking_reader import GeneralRankingReader
+from helpers.encoder import Encoder
 from helpers.renderer import Renderer
 from helpers.command import Command
 from helpers.generator_config import GeneratorType
@@ -24,5 +25,9 @@ elif args.type == 'calendar':
     config = CalendarReader(args.type, args.input, args.output, args.season).read()
 else:
     config = Reader(args.type, args.input, args.sheet, args.output).read()
-output_filepath = Renderer.render(config)
-_logger.info(f'Image successfully rendered in file "{os.path.realpath(output_filepath)}"')
+if config.type == 'video':
+    output_filepath = Encoder.encode(config)
+    _logger.info(f'Video successfully encoded in file "{os.path.realpath(output_filepath)}"')
+else:
+    output_filepath = Renderer.render(config)
+    _logger.info(f'Image successfully rendered in file "{os.path.realpath(output_filepath)}"')
