@@ -295,9 +295,9 @@ class Race:
         return f'RACE {self.round} RESULT'
 
     def get_max_position_for_fastest_lap(self):
-        if self.type in ('Normale', 'Sprint (2)'):
+        if self.type in ('Normale', 'Sprint (2)', '100 %'):
             return 14
-        elif self.type.startswith('Double Grid'):
+        elif self.type.startswith('Double Grid', 'Sprint (1)'):
             return 10
         return None
 
